@@ -11,7 +11,7 @@ android {
 
     defaultConfig {
         applicationId = "com.cs407.myapplication"
-        minSdk = 21
+        minSdk = 23
         targetSdk = 36
         versionCode = 1
         versionName = "1.0"
@@ -78,4 +78,11 @@ dependencies {
     implementation ("androidx.compose.material:material-icons-extended")
     implementation("androidx.navigation:navigation-compose:2.8.2")
 
+    // --- FIREBASE DEPENDENCIES (New additions below) ---
+
+    // 1. Firebase Bill of Materials (BOM) to manage versions
+    implementation(platform("com.google.firebase:firebase-bom:33.0.0"))
+
+    // 2. Firebase Authentication library
+    implementation("com.google.firebase:firebase-auth-ktx")
 }
