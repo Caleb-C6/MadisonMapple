@@ -7,6 +7,10 @@ import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.rememberCameraPositionState
+import com.google.maps.android.compose.Marker
+import com.google.maps.android.compose.MarkerState
+
+
 
 @Composable
 fun MapScreen() {
@@ -20,5 +24,23 @@ fun MapScreen() {
     GoogleMap(
         modifier = Modifier.fillMaxSize(),
         cameraPositionState = cameraPositionState
-    )
+    ) {
+        // Waterfront Apartment
+        Marker(
+            state = MarkerState(position = LatLng(43.07761, -89.39298)),
+            title = "Waterfront Apartment",
+        )
+
+        // Palisade Properties
+        Marker(
+            state = MarkerState(position = LatLng(43.07174, -89.39501)),
+            title = "Palisade Properties",
+        )
+
+        // Aberdeen Apartments
+        Marker(
+            state = MarkerState(position = LatLng(43.07321, -89.39356)),
+            title = "Aberdeen Apartments",
+        )
+    }
 }
