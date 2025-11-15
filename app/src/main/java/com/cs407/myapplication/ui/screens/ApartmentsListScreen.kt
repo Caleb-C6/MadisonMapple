@@ -45,8 +45,9 @@ fun ApartmentsListScreen() {
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(120.dp) // Height for image + text
-                    .clickable { /* TODO: Navigate to details */ },
+                    // Height for image + text
+                    .height(120.dp)
+                    .clickable { /* TODO: Navigate to details, implement later when we have more details */ },
                 elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
             ) {
                 Row(
