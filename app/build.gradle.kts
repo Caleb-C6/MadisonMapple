@@ -3,6 +3,8 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     id("com.google.android.libraries.mapsplatform.secrets-gradle-plugin")
+    id("com.google.devtools.ksp")
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -17,7 +19,6 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-
     }
 
     buildTypes {
@@ -45,7 +46,6 @@ android {
 }
 
 dependencies {
-
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
@@ -63,7 +63,8 @@ dependencies {
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
-    //Google maps implementation
+
+    // Google Maps implementation
     implementation("com.google.maps.android:maps-ktx:5.2.0")
     implementation("com.google.maps.android:maps-utils-ktx:5.2.0")
     implementation("com.google.maps.android:maps-compose:4.4.1")
@@ -78,11 +79,12 @@ dependencies {
     implementation ("androidx.compose.material:material-icons-extended")
     implementation("androidx.navigation:navigation-compose:2.8.2")
 
-    // --- FIREBASE DEPENDENCIES (New additions below) ---
+    // --- FIREBASE DEPENDENCIES ---
 
-    // 1. Firebase Bill of Materials (BOM) to manage versions
-    implementation(platform("com.google.firebase:firebase-bom:33.0.0"))
+    // 1. Firebase "Bill of Materials" (BOM) to manage versions
+    implementation(platform("com.google.firebase:firebase-bom:34.5.0"))
 
     // 2. Firebase Authentication library
-    implementation("com.google.firebase:firebase-auth-ktx")
+    implementation("com.google.firebase:firebase-auth")
+
 }

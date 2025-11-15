@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "756733206742",
+    "project_id": "madisonmapple-ba07f",
+    "storage_bucket": "madisonmapple-ba07f.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:756733206742:android:e9a005134eecd5bf312977",
+        "android_client_info": {
+          "package_name": "com.cs407.myapplication"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDhaOUYIRtsXRqKkBjZjQFL5Zpy5ZM9E0U"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
