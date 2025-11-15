@@ -15,7 +15,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
-import androidx.compose.animation.animateContentSize
 import androidx.navigation.NavController
 import com.cs407.myapplication.ui.auth.AuthManager
 import com.cs407.myapplication.ui.auth.isValidEmail
@@ -36,37 +35,43 @@ fun SignUpScreen(navController: NavController) {
     var isPasswordVisible by remember { mutableStateOf(false) }
     var isConfirmPasswordVisible by remember { mutableStateOf(false) }
 
-    val isSubmitAllowed = email.isNotBlank() || password.isNotBlank() || confirmPassword.isNotBlank()
+    val isSubmitAllowed =
+        email.isNotBlank() || password.isNotBlank() || confirmPassword.isNotBlank()
 
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp),
+            .padding(horizontal = 16.dp),
         contentAlignment = Alignment.Center
     ) {
         Card(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp)
-                .animateContentSize(),
-            elevation = CardDefaults.cardElevation(10.dp),
-            shape = MaterialTheme.shapes.extraLarge
+            modifier = polishedCardModifier(),
+            shape = MaterialTheme.shapes.extraLarge,
+            colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.surface
+            )
         ) {
             Column(
-                modifier = Modifier.padding(28.dp),
+                modifier = Modifier.padding(24.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
 
-                Text("Create an Account", style = MaterialTheme.typography.headlineMedium)
+                // Brand header
                 Text(
-                    "Join MadisonMapple today!",
+                    text = "MadisonMapple",
+                    style = MaterialTheme.typography.headlineLarge,
+                    color = MaterialTheme.colorScheme.primary
+                )
+                Spacer(Modifier.height(4.dp))
+                Text(
+                    text = "Create an account with your @wisc.edu email.",
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
 
                 Spacer(Modifier.height(24.dp))
 
-                // EMAIL
+                // EMAIL FIELD
                 OutlinedTextField(
                     value = email,
                     onValueChange = {
@@ -81,7 +86,7 @@ fun SignUpScreen(navController: NavController) {
 
                 Spacer(Modifier.height(16.dp))
 
-                // PASSWORD
+                // PASSWORD FIELD
                 OutlinedTextField(
                     value = password,
                     onValueChange = {
@@ -109,7 +114,7 @@ fun SignUpScreen(navController: NavController) {
 
                 Spacer(Modifier.height(16.dp))
 
-                // CONFIRM PASSWORD
+                // CONFIRM PASSWORD FIELD
                 OutlinedTextField(
                     value = confirmPassword,
                     onValueChange = {
@@ -139,11 +144,12 @@ fun SignUpScreen(navController: NavController) {
 
                 Spacer(Modifier.height(16.dp))
 
+                // ERROR MESSAGE
                 if (errorMsg.isNotEmpty()) {
                     Text(
                         text = errorMsg,
                         color = MaterialTheme.colorScheme.error,
-                        style = MaterialTheme.typography.bodyMedium
+                        style = MaterialTheme.typography.bodySmall
                     )
                     Spacer(Modifier.height(8.dp))
                 }
@@ -174,10 +180,11 @@ fun SignUpScreen(navController: NavController) {
                                     .createUserWithEmailAndPassword(email.trim(), password)
                                     .addOnCompleteListener { task ->
                                         if (task.isSuccessful) {
+
                                             val user = AuthManager.auth.currentUser
                                             user?.sendEmailVerification()
 
-                                            // Immediately log them out; they must verify first
+                                            // Immediately sign out (must verify first)
                                             AuthManager.auth.signOut()
 
                                             Toast.makeText(
@@ -204,6 +211,7 @@ fun SignUpScreen(navController: NavController) {
 
                 Spacer(Modifier.height(12.dp))
 
+                // LOGIN REDIRECT
                 TextButton(
                     onClick = { navController.popBackStack() },
                     modifier = Modifier.fillMaxWidth()

@@ -1,6 +1,7 @@
 package com.cs407.myapplication.ui.screens
 
 import android.widget.Toast
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
@@ -11,16 +12,35 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import androidx.compose.animation.animateContentSize
 import com.cs407.myapplication.ui.auth.AuthManager
 import com.cs407.myapplication.ui.auth.isValidEmail
 import com.cs407.myapplication.ui.auth.isWiscEmail
 import kotlinx.coroutines.launch
+
+@Composable
+fun polishedCardModifier(): Modifier {
+    return Modifier
+        .fillMaxWidth()
+        .padding(vertical = 28.dp)
+        .shadow(
+            elevation = 15.dp,
+            shape = MaterialTheme.shapes.extraLarge,
+            ambientColor = Color.Black.copy(alpha = 0.2f),
+            spotColor = Color.Black.copy(alpha = 0.3f)
+        )
+        .border(
+            width = 1.dp,
+            color = Color.Black.copy(alpha = 0.15f),
+            shape = MaterialTheme.shapes.extraLarge
+        )
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -65,33 +85,38 @@ fun LoginScreen(navController: NavController) {
             }
     }
 
+    // Screen background comes from MaterialTheme.colorScheme.background
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp),
+            .padding(horizontal = 16.dp),
         contentAlignment = Alignment.Center
     ) {
         Card(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp)
-                .animateContentSize(),
-            elevation = CardDefaults.cardElevation(10.dp),
-            shape = MaterialTheme.shapes.extraLarge
+            modifier = polishedCardModifier(),
+            shape = MaterialTheme.shapes.extraLarge,
+            colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.surface
+            )
         ) {
             Column(
-                modifier = Modifier.padding(28.dp),
+                modifier = Modifier.padding(24.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
 
-                Text("Welcome Back", style = MaterialTheme.typography.headlineMedium)
                 Text(
-                    "Log in to continue",
+                    text = "MadisonMapple",
+                    style = MaterialTheme.typography.headlineLarge,
+                    color = MaterialTheme.colorScheme.primary
+                )
+                Spacer(Modifier.height(4.dp))
+                Text(
+                    text = "Where Badgers find homes — and each other.",
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
 
-                Spacer(Modifier.height(24.dp))
+                Spacer(Modifier.height(28.dp))
 
                 // EMAIL
                 OutlinedTextField(
@@ -138,11 +163,12 @@ fun LoginScreen(navController: NavController) {
 
                 Spacer(Modifier.height(16.dp))
 
+                // Error message
                 if (errorMsg.isNotEmpty()) {
                     Text(
                         text = errorMsg,
                         color = MaterialTheme.colorScheme.error,
-                        style = MaterialTheme.typography.bodyMedium
+                        style = MaterialTheme.typography.bodySmall
                     )
                     Spacer(Modifier.height(8.dp))
                 }
@@ -186,7 +212,7 @@ fun LoginScreen(navController: NavController) {
                                         ) {
                                             AuthManager.auth.signOut()
                                             errorMsg =
-                                                "Please verify your @wisc.edu email before logging in. Check your inbox and spam folder."
+                                                "Please verify your @wisc.edu email before logging in. Check your inbox."
                                         } else {
                                             navController.navigate("home") {
                                                 popUpTo("login") { inclusive = true }
@@ -213,6 +239,7 @@ fun LoginScreen(navController: NavController) {
 
                 Spacer(Modifier.height(12.dp))
 
+                // SIGN UP CTA
                 FilledTonalButton(
                     onClick = { navController.navigate("signUp") },
                     modifier = Modifier.fillMaxWidth(),
@@ -223,6 +250,7 @@ fun LoginScreen(navController: NavController) {
 
                 Spacer(Modifier.height(8.dp))
 
+                // FORGOT PASSWORD
                 TextButton(onClick = { showResetDialog = true }) {
                     Text("Forgot Password?")
                 }

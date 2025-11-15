@@ -62,7 +62,7 @@ fun SlidingMenu() {
                     HorizontalDivider()
 
                     NavigationDrawerItem(
-                        label = { Text("Home (Map)") },
+                        label = { Text("Home") },
                         selected = currentRoute == "home",
                         onClick = {
                             scope.launch { drawerState.close() }
