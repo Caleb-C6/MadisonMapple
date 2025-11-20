@@ -15,12 +15,11 @@ import com.google.maps.android.compose.MarkerState
 @Composable
 fun MapScreen() {
 // Defines a state object that controls the camera's position on the map
-    val initLocation = LatLng(43.0731, -89.4012) // Hardcoded coordinates (Singapore)
+    val initLocation = LatLng(43.0731, -89.4012) // Hardcoded coordinates
     val cameraPositionState = rememberCameraPositionState {
 // Sets the initial position and zoom level of the map
         position = CameraPosition.fromLatLngZoom(initLocation, 14f)
     }
-// The GoogleMap composable displays the map UI inside your Compose layout
     GoogleMap(
         modifier = Modifier.fillMaxSize(),
         cameraPositionState = cameraPositionState

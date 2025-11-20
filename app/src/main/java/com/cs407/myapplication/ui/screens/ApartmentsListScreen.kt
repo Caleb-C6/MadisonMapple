@@ -1,7 +1,6 @@
 package com.cs407.myapplication.ui.screens
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -18,14 +17,15 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import com.cs407.myapplication.R
+import androidx.compose.foundation.background
+import com.cs407.myapplication.ui.screens.Apartment
 
 @Composable
-fun ApartmentsListScreen() {
-    // Dummy list of apartments
+fun ApartmentsListScreen(onApartmentClick: (Apartment) -> Unit = {}) {
     val apartments = listOf(
-        "Waterfront Apartment",
-        "Palisade Properties",
-        "Aberdeen Apartments"
+        Apartment("Waterfront Apartment", R.drawable.waterfront),
+        Apartment("Palisade Properties", R.drawable.palisade),
+        Apartment("Aberdeen Apartments", R.drawable.aberdeen)
     )
 
     Column(
@@ -41,13 +41,12 @@ fun ApartmentsListScreen() {
             modifier = Modifier.padding(bottom = 16.dp)
         )
 
-        apartments.forEach { apartmentName ->
+        apartments.forEach { apartment ->
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
-                    // Height for image + text
                     .height(120.dp)
-                    .clickable { /* TODO: Navigate to details, implement later when we have more details */ },
+                    .clickable { onApartmentClick(apartment) },
                 elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
             ) {
                 Row(
@@ -56,21 +55,19 @@ fun ApartmentsListScreen() {
                         .padding(12.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    // Placeholder image
-                    Box(
+                    Image(
+                        painter = painterResource(id = apartment.imageRes),
+                        contentDescription = "Image of ${apartment.name}",
                         modifier = Modifier
                             .size(96.dp)
-                            .background(Color.Gray)
-                    ) {
-                        // Later replace with Image composable
-
-                    }
+                            .background(Color.LightGray),
+                        contentScale = ContentScale.Crop
+                    )
 
                     Spacer(modifier = Modifier.width(16.dp))
 
-                    // Apartment name
                     Text(
-                        text = apartmentName,
+                        text = apartment.name,
                         style = MaterialTheme.typography.titleMedium
                     )
                 }

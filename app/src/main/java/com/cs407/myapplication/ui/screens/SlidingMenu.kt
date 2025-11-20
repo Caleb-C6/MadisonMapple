@@ -8,12 +8,22 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
+import androidx.compose.ui.res.painterResource
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
+import com.cs407.myapplication.R
 import com.cs407.myapplication.ui.auth.AuthManager
 import kotlinx.coroutines.launch
+
+val apartmentList = listOf(
+    Apartment("Waterfront Apartment", R.drawable.waterfront),
+    Apartment("Palisade Properties", R.drawable.palisade),
+    Apartment("Aberdeen Apartments", R.drawable.aberdeen)
+)
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
@@ -157,7 +167,28 @@ fun SlidingMenu() {
                 }
 
                 composable("apartments") {
-                    ApartmentsListScreen()
+                    ApartmentsListScreen(
+                        onApartmentClick = { apartment ->
+                            // Navigate to apartment detail with the apartment name as parameter
+                            navController.navigate("apartmentDetail/${apartment.name}")
+                        }
+                    )
+                }
+
+                // Add the apartment detail screen with parameter
+                composable(
+                    "apartmentDetail/{apartmentName}",
+                    arguments = listOf(navArgument("apartmentName") { type = NavType.StringType })
+                ) { backStackEntry ->
+                    val apartmentName = backStackEntry.arguments?.getString("apartmentName") ?: ""
+
+                    val apartment = apartmentList.find { it.name == apartmentName }
+                        ?: Apartment("Unknown", R.drawable.waterfront) // fallback
+
+                    ApartmentDetailScreen(
+                        apartment = apartment,
+                        onBackClick = { navController.popBackStack() }
+                    )
                 }
 
                 composable("chat") {
@@ -185,3 +216,8 @@ fun SlidingMenu() {
         }
     }
 }
+
+data class Apartment(
+    val name: String,
+    val imageRes: Int
+)
