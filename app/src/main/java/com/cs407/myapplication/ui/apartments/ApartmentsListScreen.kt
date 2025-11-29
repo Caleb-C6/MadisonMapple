@@ -1,4 +1,4 @@
-package com.cs407.myapplication.ui.screens
+package com.cs407.myapplication.ui.apartments
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -18,7 +18,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import com.cs407.myapplication.R
 import androidx.compose.foundation.background
-import com.cs407.myapplication.ui.screens.Apartment
+import com.cs407.myapplication.ui.components.Apartment
 
 @Composable
 fun ApartmentsListScreen(onApartmentClick: (Apartment) -> Unit = {}) {

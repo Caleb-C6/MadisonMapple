@@ -1,6 +1,7 @@
-package com.cs407.myapplication.ui.profile
+package com.cs407.myapplication.data.profile
 
 import android.annotation.SuppressLint
+import com.cs407.myapplication.ui.profile.UserProfile
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.firestore
 import kotlinx.coroutines.tasks.await
@@ -12,7 +13,6 @@ object ProfileRepository {
     @SuppressLint("StaticFieldLeak")
     private val firestore = Firebase.firestore
 
-    @SuppressLint("NewApi")
     suspend fun loadUserProfile(uid: String): UserProfile? {
         return try {
             val snapshot = firestore

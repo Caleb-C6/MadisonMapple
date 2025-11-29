@@ -1,7 +1,7 @@
-package com.cs407.myapplication.ui.screens
+package com.cs407.myapplication.ui.components
 
 import android.annotation.SuppressLint
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.*
@@ -10,13 +10,20 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
-import androidx.compose.ui.res.painterResource
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.cs407.myapplication.R
+import com.cs407.myapplication.ui.apartments.ApartmentDetailScreen
+import com.cs407.myapplication.ui.apartments.ApartmentsListScreen
 import com.cs407.myapplication.ui.auth.AuthManager
+import com.cs407.myapplication.ui.auth.LoginScreen
+import com.cs407.myapplication.ui.auth.SignUpScreen
+import com.cs407.myapplication.ui.chat.ChatScreen
+import com.cs407.myapplication.ui.home.MapScreen
+import com.cs407.myapplication.ui.profile.ProfileScreen
+import com.cs407.myapplication.ui.roommates.RoommateBrowseScreen
 import kotlinx.coroutines.launch
 
 val apartmentList = listOf(
@@ -169,13 +176,11 @@ fun SlidingMenu() {
                 composable("apartments") {
                     ApartmentsListScreen(
                         onApartmentClick = { apartment ->
-                            // Navigate to apartment detail with the apartment name as parameter
                             navController.navigate("apartmentDetail/${apartment.name}")
                         }
                     )
                 }
 
-                // Add the apartment detail screen with parameter
                 composable(
                     "apartmentDetail/{apartmentName}",
                     arguments = listOf(navArgument("apartmentName") { type = NavType.StringType })
@@ -183,7 +188,7 @@ fun SlidingMenu() {
                     val apartmentName = backStackEntry.arguments?.getString("apartmentName") ?: ""
 
                     val apartment = apartmentList.find { it.name == apartmentName }
-                        ?: Apartment("Unknown", R.drawable.waterfront) // fallback
+                        ?: Apartment("Unknown", R.drawable.waterfront)
 
                     ApartmentDetailScreen(
                         apartment = apartment,
@@ -203,11 +208,16 @@ fun SlidingMenu() {
                     ProfileScreen(
                         onLogout = {
                             AuthManager.auth.signOut()
-
                             navController.navigate("login") {
                                 popUpTo(0) { inclusive = true }
                             }
-
+                            scope.launch { drawerState.close() }
+                        },
+                        onAccountDeleted = {
+                            AuthManager.auth.signOut()
+                            navController.navigate("login") {
+                                popUpTo(0) { inclusive = true }
+                            }
                             scope.launch { drawerState.close() }
                         }
                     )

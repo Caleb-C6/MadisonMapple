@@ -1,4 +1,4 @@
-package com.cs407.myapplication.ui.screens
+package com.cs407.myapplication.ui.apartments
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -21,7 +21,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.cs407.myapplication.R
-import com.cs407.myapplication.ui.screens.Apartment
+import com.cs407.myapplication.ui.components.Apartment
 
 @Composable
 fun ApartmentDetailScreen(
