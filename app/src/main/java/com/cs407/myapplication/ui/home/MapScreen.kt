@@ -1,4 +1,4 @@
-package com.cs407.myapplication.ui.screens
+package com.cs407.myapplication.ui.home
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
@@ -14,10 +14,10 @@ import com.google.maps.android.compose.MarkerState
 
 @Composable
 fun MapScreen() {
-// Defines a state object that controls the camera's position on the map
+    // Defines a state object that controls the camera's position on the map
     val initLocation = LatLng(43.0731, -89.4012) // Hardcoded coordinates
     val cameraPositionState = rememberCameraPositionState {
-// Sets the initial position and zoom level of the map
+        // Sets the initial position and zoom level of the map
         position = CameraPosition.fromLatLngZoom(initLocation, 14f)
     }
     GoogleMap(

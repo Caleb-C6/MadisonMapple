@@ -1,4 +1,4 @@
-package com.cs407.myapplication.ui.screens
+package com.cs407.myapplication.ui.auth
 
 import android.widget.Toast
 import androidx.compose.foundation.layout.*
@@ -16,10 +16,6 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.cs407.myapplication.ui.auth.AuthManager
-import com.cs407.myapplication.ui.auth.isValidEmail
-import com.cs407.myapplication.ui.auth.isStrongPassword
-import com.cs407.myapplication.ui.auth.isWiscEmail
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

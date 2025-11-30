@@ -84,9 +84,11 @@ dependencies {
     // --- FIREBASE DEPENDENCIES ---
 
     // 1. Firebase "Bill of Materials" (BOM) to manage versions
-    implementation(platform("com.google.firebase:firebase-bom:34.5.0"))
+    implementation(platform("com.google.firebase:firebase-bom:33.7.0"))
 
     // 2. Firebase Authentication library
     implementation("com.google.firebase:firebase-auth")
 
+    // 3. Firestore (for storing user profiles)
+    implementation("com.google.firebase:firebase-firestore-ktx")
 }
