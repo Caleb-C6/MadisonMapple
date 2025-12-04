@@ -25,6 +25,9 @@ import com.cs407.myapplication.ui.home.MapScreen
 import com.cs407.myapplication.ui.profile.ProfileScreen
 import com.cs407.myapplication.ui.roommates.RoommateBrowseScreen
 import kotlinx.coroutines.launch
+import androidx.compose.ui.platform.LocalContext
+import com.cs407.myapplication.ui.database.ApartmentDatabase
+import com.cs407.myapplication.ui.database.ApartmentEntity
 
 val apartmentList = listOf(
     Apartment("Waterfront Apartment", R.drawable.waterfront),
@@ -49,6 +52,8 @@ fun SlidingMenu() {
 
     // Show drawer only when logged in
     val drawerEnabled = isLoggedIn && currentRoute !in listOf("login", "signUp")
+    //Checks if the current route is home
+    val isMapScreen = currentRoute == "home"
 
     // Close drawer on login or signUp screens
     LaunchedEffect(currentRoute) {
@@ -140,6 +145,7 @@ fun SlidingMenu() {
 
         Scaffold(
             topBar = {
+
                 if (drawerEnabled) {
                     TopAppBar(
                         title = {},
@@ -175,6 +181,7 @@ fun SlidingMenu() {
 
                 composable("apartments") {
                     ApartmentsListScreen(
+
                         onApartmentClick = { apartment ->
                             navController.navigate("apartmentDetail/${apartment.name}")
                         }

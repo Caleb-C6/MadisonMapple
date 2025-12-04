@@ -2,9 +2,10 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    id("org.jetbrains.kotlin.kapt")
     id("com.google.android.libraries.mapsplatform.secrets-gradle-plugin")
-    id("com.google.devtools.ksp")
     id("com.google.gms.google-services")
+
 }
 
 android {
@@ -91,4 +92,12 @@ dependencies {
 
     // 3. Firestore (for storing user profiles)
     implementation("com.google.firebase:firebase-firestore-ktx")
+
+    implementation ("androidx.room:room-runtime:2.7.0-alpha12")
+    implementation ("androidx.room:room-ktx:2.7.0-alpha12")
+    kapt("androidx.room:room-compiler:2.7.0-alpha12")
+
+
+
+
 }

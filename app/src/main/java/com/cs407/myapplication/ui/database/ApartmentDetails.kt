@@ -35,7 +35,7 @@ object ApartmentDetails {
                 id = 4,
                 name = "Iota Courts",
                 address = "",
-                coordinates = "",
+                coordinates = "43.0730556, -89.4011111",
                 utilities = "Wifi"
             ),
             ApartmentEntity(
@@ -54,65 +54,75 @@ object ApartmentDetails {
                 apartmentId = 1,
                 size = "1024 - 1170",
                 bedsBath = "3 bed, 2 bath",
-                rent = "1576 - 1871"),
+                rent = "1576 - 1871"
+            ),
             FloorPlanEntity(
                 id = 2,
                 apartmentId = 1,
-                size ="1373 - 1458",
+                size = "1373 - 1458",
                 bedsBath = "5 bed, 2 bath",
-                rent = "1450 - 1680"),
+                rent = "1450 - 1680"
+            ),
 
             FloorPlanEntity(
                 id = 3,
                 apartmentId = 2,
-                size ="775 - 865",
+                size = "775 - 865",
                 bedsBath = "2 bed, 1 bath",
-                rent = "1525 - 1588"),
+                rent = "1525 - 1588"
+            ),
             FloorPlanEntity(
                 id = 4,
                 apartmentId = 2,
-                size ="861 - 904",
-                bedsBath ="2 bed, 2 bath",
-                rent = "1700 - 1800"),
+                size = "861 - 904",
+                bedsBath = "2 bed, 2 bath",
+                rent = "1700 - 1800"
+            ),
 
             FloorPlanEntity(
                 id = 5,
                 apartmentId = 3,
-                size ="300 - 365",
+                size = "300 - 365",
                 bedsBath = "Studio",
-                rent = "1300 - 1400"),
+                rent = "1300 - 1400"
+            ),
             FloorPlanEntity(
                 id = 6,
                 apartmentId = 3,
-                size ="498 - 518",
+                size = "498 - 518",
                 bedsBath = "1 bed, 1 bath",
-                rent = "1500 - 1600"),
+                rent = "1500 - 1600"
+            ),
 
             FloorPlanEntity(
                 id = 7,
                 apartmentId = 4,
                 size = "298 - 435",
                 bedsBath = "Studio",
-                rent = "1750 - 2100"),
+                rent = "1750 - 2100"
+            ),
             FloorPlanEntity(
                 id = 8,
                 apartmentId = 4,
-                size ="457 - 792",
+                size = "457 - 792",
                 bedsBath = "1 bed, 1 bath",
-                rent = "1925 - 2205"),
+                rent = "1925 - 2205"
+            ),
 
             FloorPlanEntity(
                 id = 9,
                 apartmentId = 5,
                 size = "577 - 643",
                 bedsBath = "1 bed, 1 bath",
-                rent = "2200 - 2300"),
+                rent = "2200 - 2300"
+            ),
             FloorPlanEntity(
                 id = 10,
                 apartmentId = 5,
                 size = "657 - 685",
                 bedsBath = "2 bed, 1 bath",
-                rent = "1450 - 1600")
+                rent = "1450 - 1600"
+            )
         )
 
         apartments.forEach { dao.insertApartment(it) }
