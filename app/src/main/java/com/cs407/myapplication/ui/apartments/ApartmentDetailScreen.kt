@@ -52,6 +52,20 @@ fun ApartmentDetailScreen(
             R.drawable.aberdeengallary3,
             R.drawable.aberdeengallary4
         )
+        "140 Iota Courts" -> listOf(
+            R.drawable.iota,
+            R.drawable.iotagallary1,
+            R.drawable.iotagallary2,
+            R.drawable.iotagallary3,
+            R.drawable.iotagallary4
+        )
+        "The Langdon Apartment" -> listOf(
+            R.drawable.langdon,
+            R.drawable.langdongallary1,
+            R.drawable.langdongallary2,
+            R.drawable.langdongallary3,
+            R.drawable.langdongallary4
+        )
         else -> listOf(apartment.imageRes)
     }
 

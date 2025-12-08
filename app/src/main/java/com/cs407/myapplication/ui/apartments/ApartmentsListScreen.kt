@@ -1,6 +1,7 @@
 package com.cs407.myapplication.ui.apartments
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -13,11 +14,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.dp
 import com.cs407.myapplication.R
-import androidx.compose.foundation.background
 import com.cs407.myapplication.ui.components.Apartment
 
 @Composable
@@ -25,7 +25,9 @@ fun ApartmentsListScreen(onApartmentClick: (Apartment) -> Unit = {}) {
     val apartments = listOf(
         Apartment("Waterfront Apartment", R.drawable.waterfront),
         Apartment("Palisade Properties", R.drawable.palisade),
-        Apartment("Aberdeen Apartments", R.drawable.aberdeen)
+        Apartment("Aberdeen Apartments", R.drawable.aberdeen),
+        Apartment("140 Iota Courts", R.drawable.iota),
+        Apartment("The Langdon Apartment", R.drawable.langdon)
     )
 
     Column(
