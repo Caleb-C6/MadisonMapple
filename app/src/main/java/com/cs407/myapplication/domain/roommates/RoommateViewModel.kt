@@ -1,4 +1,4 @@
-package com.cs407.myapplication.ui.roommates
+package com.cs407.myapplication.domain.roommates
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

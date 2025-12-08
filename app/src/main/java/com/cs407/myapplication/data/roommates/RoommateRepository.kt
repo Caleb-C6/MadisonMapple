@@ -25,12 +25,13 @@ object RoommateRepository {
             .get()
             .await()
 
-        return snapshot.documents.mapNotNull { doc ->
+        val profiles = snapshot.documents.mapNotNull { doc ->
             val profile = doc.toObject(UserProfile::class.java)
             profile?.copy(uid = doc.id)
-        }.filter { profile ->
-            profile.uid != currentUid && isProfileComplete(profile)
         }
+
+        val filtered = profiles.filter { it.uid != currentUid && isProfileComplete(it) }
+        return filtered
     }
 
     private fun isProfileComplete(p: UserProfile): Boolean {

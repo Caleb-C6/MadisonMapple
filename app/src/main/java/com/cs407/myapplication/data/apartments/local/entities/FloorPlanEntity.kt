@@ -1,10 +1,9 @@
-package com.cs407.myapplication.ui.database
+package com.cs407.myapplication.data.apartments.local.entities
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-//Schema for floorplans
-
+// Schema for floorplans
 @Entity(tableName = "floorplans")
 data class FloorPlanEntity(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,

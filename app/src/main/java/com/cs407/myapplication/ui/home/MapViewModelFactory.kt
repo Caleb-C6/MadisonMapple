@@ -2,7 +2,7 @@ package com.cs407.myapplication.ui.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.cs407.myapplication.ui.database.ApartmentDao
+import com.cs407.myapplication.data.apartments.local.dao.ApartmentDao
 
 class MapViewModelFactory(
     private val dao: ApartmentDao

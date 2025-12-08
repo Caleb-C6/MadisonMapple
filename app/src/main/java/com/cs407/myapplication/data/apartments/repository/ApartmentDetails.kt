@@ -1,8 +1,8 @@
-package com.cs407.myapplication.ui.database
+package com.cs407.myapplication.data.apartments.repository
 
-import com.cs407.myapplication.ui.database.ApartmentDetails
-import com.cs407.myapplication.ui.database.FloorPlanEntity
-import com.cs407.myapplication.ui.database.ApartmentDao
+import com.cs407.myapplication.data.apartments.local.dao.ApartmentDao
+import com.cs407.myapplication.data.apartments.local.entities.ApartmentEntity
+import com.cs407.myapplication.data.apartments.local.entities.FloorPlanEntity
 
 object ApartmentDetails {
 

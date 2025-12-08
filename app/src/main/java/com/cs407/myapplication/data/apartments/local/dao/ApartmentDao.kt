@@ -1,6 +1,12 @@
-package com.cs407.myapplication.ui.database
+package com.cs407.myapplication.data.apartments.local.dao
 
-import androidx.room.*
+import androidx.room.Dao
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
+import androidx.room.Query
+import androidx.room.Transaction
+import com.cs407.myapplication.data.apartments.local.entities.ApartmentEntity
+import com.cs407.myapplication.data.apartments.local.entities.FloorPlanEntity
 
 @Dao
 interface ApartmentDao {

@@ -1,9 +1,7 @@
 package com.cs407.myapplication.ui.home
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -28,9 +26,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.cs407.myapplication.ui.database.ApartmentDatabase
-import com.cs407.myapplication.ui.database.ApartmentDetails
-import com.cs407.myapplication.ui.database.ApartmentEntity
+import com.cs407.myapplication.data.apartments.local.db.ApartmentDatabase
+import com.cs407.myapplication.data.apartments.repository.ApartmentDetails
+import com.cs407.myapplication.data.apartments.local.entities.ApartmentEntity
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.GoogleMap
@@ -63,7 +61,7 @@ fun MapScreen() {
     // Camera Setup (Madison, WI)
     val initLocation = LatLng(43.0731, -89.4012)
     val cameraPositionState = rememberCameraPositionState {
-        position = CameraPosition.fromLatLngZoom(initLocation, 14f)
+        position = CameraPosition.fromLatLngZoom(initLocation, 14.5f)
     }
 
     // 1. Draw the Map

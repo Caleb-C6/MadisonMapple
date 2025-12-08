@@ -7,13 +7,20 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.outlined.FavoriteBorder
+import androidx.compose.material.icons.filled.EmojiEmotions
+import androidx.compose.material.icons.filled.Schedule
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.LocalCafe
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.cs407.myapplication.domain.roommates.RoommateViewModel
 import com.cs407.myapplication.ui.profile.UserProfile
 
 /* ---------------------------------------------------------
@@ -140,11 +147,11 @@ private fun FilterRow(
 ) {
     Row(
         modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.Center,   // Center group
+        horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically
     ) {
         Row(
-            horizontalArrangement = Arrangement.spacedBy(12.dp), // spacing between buttons
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             FilterChipButton(
@@ -191,6 +198,7 @@ private fun FilterChipButton(
    PROFILE CARD
 --------------------------------------------------------- */
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun RoommateProfileCard(
     profile: UserProfile,
@@ -198,32 +206,37 @@ fun RoommateProfileCard(
     onToggleFavorite: () -> Unit
 ) {
     Card(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 12.dp, vertical = 10.dp)
+            .widthIn(max = 500.dp),
         shape = MaterialTheme.shapes.large,
+        elevation = CardDefaults.cardElevation(3.dp),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceVariant
+            containerColor = MaterialTheme.colorScheme.surface
         )
     ) {
 
-        Column(modifier = Modifier.padding(16.dp)) {
+        Column(
+            Modifier
+                .padding(14.dp),
+            verticalArrangement = Arrangement.spacedBy(6.dp)
+        ) {
 
-            /* -------------------------
-               TOP ROW: NAME + HEART
-            -------------------------- */
+            /* -------------------------------------------------------
+               NAME + HEART
+            -------------------------------------------------------- */
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.Top
+                verticalAlignment = Alignment.CenterVertically
             ) {
-
-                Column(modifier = Modifier.weight(1f)) {
-
+                Column {
                     Text(
                         text = profile.displayName,
                         style = MaterialTheme.typography.titleMedium,
-                        color = MaterialTheme.colorScheme.onSurface
+                        color = MaterialTheme.colorScheme.primary
                     )
-
                     Text(
                         text = profile.hometown,
                         style = MaterialTheme.typography.bodySmall,
@@ -232,106 +245,84 @@ fun RoommateProfileCard(
                 }
 
                 IconButton(onClick = onToggleFavorite) {
-                    if (isFavorite) {
-                        Icon(
-                            imageVector = Icons.Filled.Favorite,
-                            contentDescription = "Unfavorite",
-                            tint = MaterialTheme.colorScheme.primary
-                        )
-                    } else {
-                        Icon(
-                            imageVector = Icons.Outlined.FavoriteBorder,
-                            contentDescription = "Favorite",
-                            tint = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    }
+                    Icon(
+                        imageVector =
+                            if (isFavorite) Icons.Filled.Favorite
+                            else Icons.Outlined.FavoriteBorder,
+                        contentDescription = null,
+                        tint = if (isFavorite)
+                            MaterialTheme.colorScheme.primary
+                        else MaterialTheme.colorScheme.onSurfaceVariant
+                    )
                 }
             }
 
-            Spacer(Modifier.height(8.dp))
-
-            /* -------------------------
+            /* -------------------------------------------------------
                INTERESTS
-            -------------------------- */
+            -------------------------------------------------------- */
+            SectionTitle("Interests", Icons.Default.EmojiEmotions)
             Text(
-                text = "Interests: ${profile.interests}",
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurface,
-                maxLines = 2,
-                overflow = TextOverflow.Ellipsis
+                text = profile.interests,
+                style = MaterialTheme.typography.bodyMedium
             )
 
-            Spacer(Modifier.height(6.dp))
-
-            /* -------------------------
-               ROUTINE
-            -------------------------- */
-            Text(
-                text = "Daily routine: wakes ${profile.wakeUpTime?.label}, sleeps ${profile.sleepTime?.label}",
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
+            /* -------------------------------------------------------
+               DAILY ROUTINE
+            -------------------------------------------------------- */
+            SectionTitle("Daily routine", Icons.Default.Schedule)
+            ChipFlow(
+                listOf(
+                    "Wake: ${profile.wakeUpTime?.label}",
+                    "Sleep: ${profile.sleepTime?.label}"
+                )
             )
 
-            /* -------------------------
-               STUDY + SOCIAL
-            -------------------------- */
-            Text(
-                text = "Study: ${profile.studyHabits?.label} • Social: ${profile.partyingFrequency?.label}",
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
+            /* -------------------------------------------------------
+               PERSONALITY
+            -------------------------------------------------------- */
+            SectionTitle("Personality", Icons.Default.Person)
+            ChipFlow(
+                listOf(
+                    "Cleanliness: ${describeScaleSimple(profile.cleanliness)}",
+                    "Noise: ${describeScaleSimple(profile.noiseTolerance)}",
+                    "Social: ${describeScaleSimple(profile.introvertExtrovert)}",
+                    "Study: ${profile.studyHabits?.label ?: ""}",
+                    "Parties: ${profile.partyingFrequency?.label ?: ""}"
+                )
             )
 
-            Spacer(Modifier.height(6.dp))
-
-            /* -------------------------
-               SLIDER SUMMARIES
-            -------------------------- */
-            Text(
-                text = "${describeScale("Cleanliness", profile.cleanliness)} • " +
-                        "${describeScale("Noise tolerance", profile.noiseTolerance)} • " +
-                        "${describeScale("Introvert/Extrovert", profile.introvertExtrovert)}",
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
+            /* -------------------------------------------------------
+               LIFESTYLE
+            -------------------------------------------------------- */
+            SectionTitle("Lifestyle", Icons.Default.LocalCafe)
+            ChipFlow(
+                listOfNotNull(
+                    if (profile.smoker) "Smoker" else "Non-smoker",
+                    if (profile.drinker) "Drinks" else "No alcohol",
+                    if (profile.pets) "Pets" else "No pets",
+                    if (profile.guestsAllowed) "Guests OK" else null,
+                    if (profile.overnightGuests) "Overnights OK" else null
+                )
             )
 
-            Spacer(Modifier.height(6.dp))
-
-            /* -------------------------
-               LIFESTYLE FLAGS
-            -------------------------- */
-            val lifestyleBits = listOf(
-                if (profile.smoker) "Smoker" else "Non-smoker",
-                if (profile.drinker) "Drinks" else "Doesn't drink",
-                if (profile.pets) "Pets" else "No pets",
-                if (profile.guestsAllowed) "OK with guests" else "",
-                if (profile.overnightGuests) "Overnight guests OK" else ""
-            ).filter { it.isNotBlank() }
-
-            Text(
-                text = lifestyleBits.joinToString(" • "),
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-
-            Spacer(Modifier.height(6.dp))
-
-            /* -------------------------
+            /* -------------------------------------------------------
                HOUSING
-            -------------------------- */
-            Text(
-                text = "Housing: ${profile.roomTypePreference?.label} • ${profile.budgetRange}",
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
+            -------------------------------------------------------- */
+            SectionTitle("Housing", Icons.Default.Home)
+            ChipFlow(
+                listOf(
+                    profile.roomTypePreference?.label ?: "",
+                    "Budget: ${profile.budgetRange}"
+                )
             )
 
-            /* -------------------------
-               SOCIAL LINKS
-            -------------------------- */
-            Spacer(Modifier.height(6.dp))
-
+            /* -------------------------------------------------------
+               CONTACT
+            -------------------------------------------------------- */
+            SectionTitle("Contact", Icons.Default.AccountCircle)
             Text(
-                text = "Contact: ${profile.socialLinks}",
-                style = MaterialTheme.typography.bodySmall,
+                text = profile.socialLinks,
+                style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.primary
             )
         }
@@ -339,15 +330,53 @@ fun RoommateProfileCard(
 }
 
 /* ---------------------------------------------------------
-   HELPER
+   HELPERS
 --------------------------------------------------------- */
 
-private fun describeScale(label: String, value: Int): String {
-    val desc = when (value) {
-        1, 2 -> "Low"
+@Composable
+private fun SectionTitle(text: String, icon: ImageVector) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier.padding(top = 8.dp, bottom = 2.dp)
+    ) {
+        Icon(
+            icon,
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.primary
+        )
+        Spacer(Modifier.width(6.dp))
+        Text(
+            text = text,
+            color = MaterialTheme.colorScheme.primary,
+            style = MaterialTheme.typography.titleSmall
+        )
+    }
+}
+
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+private fun ChipFlow(labels: List<String>) {
+    FlowRow(
+        horizontalArrangement = Arrangement.spacedBy(6.dp),
+        verticalArrangement = Arrangement.spacedBy(6.dp),
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        labels.forEach { label ->
+            AssistChip(
+                onClick = {},
+                label = { Text(label) },
+                colors = AssistChipDefaults.assistChipColors(
+                    containerColor = MaterialTheme.colorScheme.surfaceVariant
+                )
+            )
+        }
+    }
+}
+
+private fun describeScaleSimple(value: Int) =
+    when (value) {
+        in 1..2 -> "Low"
         3 -> "Medium"
-        4, 5 -> "High"
+        in 4..5 -> "High"
         else -> "Medium"
     }
-    return "$label: $desc"
-}

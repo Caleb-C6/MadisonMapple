@@ -13,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.cs407.myapplication.domain.profile.ProfileViewModel
 import com.cs407.myapplication.ui.auth.AuthManager
 
 /* ---------------------------------------------------------

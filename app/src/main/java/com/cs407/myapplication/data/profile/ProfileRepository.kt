@@ -9,7 +9,6 @@ import kotlinx.coroutines.tasks.await
 object ProfileRepository {
 
     private const val USERS_COLLECTION = "users"
-
     @SuppressLint("StaticFieldLeak")
     private val firestore = Firebase.firestore
 
@@ -20,18 +19,17 @@ object ProfileRepository {
                 .document(uid)
                 .get()
                 .await()
-
             snapshot.toObject(UserProfile::class.java)
         } catch (e: Exception) {
             null
         }
     }
 
-    suspend fun saveUserProfile(profile: UserProfile) {
+    suspend fun saveUserProfile(authUid: String, profile: UserProfile) {
         firestore
             .collection(USERS_COLLECTION)
-            .document(profile.uid)
-            .set(profile)
+            .document(authUid)
+            .set(profile.copy(uid = authUid))
             .await()
     }
 }

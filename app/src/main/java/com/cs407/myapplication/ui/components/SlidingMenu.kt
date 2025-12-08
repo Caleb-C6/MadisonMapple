@@ -1,11 +1,12 @@
 package com.cs407.myapplication.ui.components
 
 import android.annotation.SuppressLint
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavType
@@ -25,9 +26,6 @@ import com.cs407.myapplication.ui.home.MapScreen
 import com.cs407.myapplication.ui.profile.ProfileScreen
 import com.cs407.myapplication.ui.roommates.RoommateBrowseScreen
 import kotlinx.coroutines.launch
-import androidx.compose.ui.platform.LocalContext
-import com.cs407.myapplication.ui.database.ApartmentDatabase
-import com.cs407.myapplication.ui.database.ApartmentEntity
 
 val apartmentList = listOf(
     Apartment("Waterfront Apartment", R.drawable.waterfront),
@@ -47,44 +45,28 @@ fun SlidingMenu() {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
 
-    // Authentication check (simplified)
     val isLoggedIn = AuthManager.auth.currentUser != null
-
-    // Show drawer only when logged in
     val drawerEnabled = isLoggedIn && currentRoute !in listOf("login", "signUp")
-    //Checks if the current route is home
     val isMapScreen = currentRoute == "home"
 
-    // Close drawer on login or signUp screens
     LaunchedEffect(currentRoute) {
-        if (currentRoute == "login" || currentRoute == "signUp") {
-            drawerState.close()
-        }
+        if (currentRoute == "login" || currentRoute == "signUp") drawerState.close()
     }
 
-    // Keep drawer closed on first arrival to home screen after login
     LaunchedEffect(currentRoute, isLoggedIn) {
-        if (currentRoute == "home" && isLoggedIn) {
-            drawerState.close()
-        }
+        if (currentRoute == "home" && isLoggedIn) drawerState.close()
     }
 
     ModalNavigationDrawer(
         drawerState = drawerState,
-        gesturesEnabled = drawerEnabled,
+        gesturesEnabled = drawerEnabled && !isMapScreen,
         drawerContent = {
             if (drawerEnabled) {
                 ModalDrawerSheet {
-
-                    Text(
-                        text = "Menu",
-                        style = MaterialTheme.typography.titleMedium,
-                        modifier = Modifier.padding(16.dp)
-                    )
+                    Text("Menu", style = MaterialTheme.typography.titleMedium, modifier = Modifier.padding(16.dp))
                     HorizontalDivider()
 
-                    NavigationDrawerItem(
-                        label = { Text("Home") },
+                    NavigationDrawerItem(label = { Text("Home") },
                         selected = currentRoute == "home",
                         onClick = {
                             scope.launch { drawerState.close() }
@@ -95,47 +77,35 @@ fun SlidingMenu() {
                         }
                     )
 
-                    NavigationDrawerItem(
-                        label = { Text("Apartments") },
+                    NavigationDrawerItem(label = { Text("Apartments") },
                         selected = currentRoute == "apartments",
                         onClick = {
                             scope.launch { drawerState.close() }
-                            navController.navigate("apartments") {
-                                launchSingleTop = true
-                            }
+                            navController.navigate("apartments") { launchSingleTop = true }
                         }
                     )
 
-                    NavigationDrawerItem(
-                        label = { Text("Chat") },
+                    NavigationDrawerItem(label = { Text("Chat") },
                         selected = currentRoute == "chat",
                         onClick = {
                             scope.launch { drawerState.close() }
-                            navController.navigate("chat") {
-                                launchSingleTop = true
-                            }
+                            navController.navigate("chat") { launchSingleTop = true }
                         }
                     )
 
-                    NavigationDrawerItem(
-                        label = { Text("Roommates") },
+                    NavigationDrawerItem(label = { Text("Roommates") },
                         selected = currentRoute == "roommates",
                         onClick = {
                             scope.launch { drawerState.close() }
-                            navController.navigate("roommates") {
-                                launchSingleTop = true
-                            }
+                            navController.navigate("roommates") { launchSingleTop = true }
                         }
                     )
 
-                    NavigationDrawerItem(
-                        label = { Text("Profile") },
+                    NavigationDrawerItem(label = { Text("Profile") },
                         selected = currentRoute == "profile",
                         onClick = {
                             scope.launch { drawerState.close() }
-                            navController.navigate("profile") {
-                                launchSingleTop = true
-                            }
+                            navController.navigate("profile") { launchSingleTop = true }
                         }
                     )
                 }
@@ -143,91 +113,77 @@ fun SlidingMenu() {
         }
     ) {
 
-        Scaffold(
-            topBar = {
+        Box(Modifier.fillMaxSize()) {
 
-                if (drawerEnabled) {
-                    TopAppBar(
-                        title = {},
-                        navigationIcon = {
-                            IconButton(
-                                onClick = { scope.launch { drawerState.open() } }
-                            ) {
-                                Icon(Icons.Default.Menu, contentDescription = "Menu")
-                            }
+            /** ---------- MAIN SCREEN CONTENT ---------- */
+            Scaffold { innerPadding ->
+                Box(
+                    Modifier
+                        .padding(top = 55.dp)  // make room for FAB
+                        .padding(innerPadding)
+                ) {
+                    NavHost(
+                        navController = navController,
+                        startDestination = if (isLoggedIn) "home" else "login",
+                    ) {
+
+                        composable("login") { LoginScreen(navController) }
+                        composable("signUp") { SignUpScreen(navController) }
+                        composable("home") { MapScreen() }
+                        composable("chat") { ChatScreen() }
+                        composable("roommates") { RoommateBrowseScreen() }
+
+                        composable("apartments") {
+                            ApartmentsListScreen(
+                                onApartmentClick = { apartment ->
+                                    navController.navigate("apartmentDetail/${apartment.name}")
+                                }
+                            )
                         }
-                    )
+
+                        composable(
+                            "apartmentDetail/{apartmentName}",
+                            arguments = listOf(navArgument("apartmentName") { type = NavType.StringType })
+                        ) { backStackEntry ->
+                            val apartmentName = backStackEntry.arguments?.getString("apartmentName") ?: ""
+
+                            val apartment = apartmentList.find { it.name == apartmentName }
+                                ?: Apartment("Unknown", R.drawable.waterfront)
+
+                            ApartmentDetailScreen(
+                                apartment = apartment,
+                                onBackClick = { navController.popBackStack() }
+                            )
+                        }
+
+                        composable("profile") {
+                            ProfileScreen(
+                                onLogout = {
+                                    AuthManager.auth.signOut()
+                                    navController.navigate("login") { popUpTo(0) { inclusive = true } }
+                                },
+                                onAccountDeleted = {
+                                    AuthManager.auth.signOut()
+                                    navController.navigate("login") { popUpTo(0) { inclusive = true } }
+                                }
+                            )
+                        }
+                    }
                 }
             }
-        ) { innerPadding ->
 
-            NavHost(
-                navController = navController,
-                startDestination = if (isLoggedIn) "home" else "login",
-                modifier = Modifier.padding(innerPadding)
-            ) {
-
-                composable("login") {
-                    LoginScreen(navController)
-                }
-
-                composable("signUp") {
-                    SignUpScreen(navController)
-                }
-
-                composable("home") {
-                    MapScreen()
-                }
-
-                composable("apartments") {
-                    ApartmentsListScreen(
-
-                        onApartmentClick = { apartment ->
-                            navController.navigate("apartmentDetail/${apartment.name}")
-                        }
-                    )
-                }
-
-                composable(
-                    "apartmentDetail/{apartmentName}",
-                    arguments = listOf(navArgument("apartmentName") { type = NavType.StringType })
-                ) { backStackEntry ->
-                    val apartmentName = backStackEntry.arguments?.getString("apartmentName") ?: ""
-
-                    val apartment = apartmentList.find { it.name == apartmentName }
-                        ?: Apartment("Unknown", R.drawable.waterfront)
-
-                    ApartmentDetailScreen(
-                        apartment = apartment,
-                        onBackClick = { navController.popBackStack() }
-                    )
-                }
-
-                composable("chat") {
-                    ChatScreen()
-                }
-
-                composable("roommates") {
-                    RoommateBrowseScreen()
-                }
-
-                composable("profile") {
-                    ProfileScreen(
-                        onLogout = {
-                            AuthManager.auth.signOut()
-                            navController.navigate("login") {
-                                popUpTo(0) { inclusive = true }
-                            }
-                            scope.launch { drawerState.close() }
-                        },
-                        onAccountDeleted = {
-                            AuthManager.auth.signOut()
-                            navController.navigate("login") {
-                                popUpTo(0) { inclusive = true }
-                            }
-                            scope.launch { drawerState.close() }
-                        }
-                    )
+            /** ---------- FLOATING MENU BUTTON ---------- */
+            if (drawerEnabled) {
+                FloatingActionButton(
+                    onClick = { scope.launch { drawerState.open() } },
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    contentColor = MaterialTheme.colorScheme.onPrimary,
+                    modifier = Modifier
+                        .padding(start = 20.dp, top = 30.dp)
+                        .align(Alignment.TopStart)
+                        .size(35.dp)
+                ) {
+                    Icon(Icons.Default.Menu, contentDescription = null)
                 }
             }
         }

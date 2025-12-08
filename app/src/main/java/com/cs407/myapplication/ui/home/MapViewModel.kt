@@ -2,8 +2,8 @@ package com.cs407.myapplication.ui.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.cs407.myapplication.ui.database.ApartmentDao
-import com.cs407.myapplication.ui.database.ApartmentEntity
+import com.cs407.myapplication.data.apartments.local.dao.ApartmentDao
+import com.cs407.myapplication.data.apartments.local.entities.ApartmentEntity
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch

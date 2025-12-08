@@ -1,9 +1,12 @@
-package com.cs407.myapplication.ui.database
+package com.cs407.myapplication.data.apartments.local.db
 
 import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import com.cs407.myapplication.data.apartments.local.entities.ApartmentEntity
+import com.cs407.myapplication.data.apartments.local.entities.FloorPlanEntity
+import com.cs407.myapplication.data.apartments.local.dao.ApartmentDao
 
 @Database(
     entities = [ApartmentEntity::class, FloorPlanEntity::class],

@@ -1,13 +1,20 @@
-package com.cs407.myapplication.ui.profile
+package com.cs407.myapplication.domain.profile
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.cs407.myapplication.data.profile.ProfileRepository
 import com.cs407.myapplication.ui.auth.AuthManager
+import com.cs407.myapplication.ui.profile.PartyingFrequency
+import com.cs407.myapplication.ui.profile.ProfileUiState
+import com.cs407.myapplication.ui.profile.RoomTypePreference
+import com.cs407.myapplication.ui.profile.SleepTime
+import com.cs407.myapplication.ui.profile.StudyHabits
+import com.cs407.myapplication.ui.profile.UserProfile
+import com.cs407.myapplication.ui.profile.WakeUpTime
 import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
-import com.google.firebase.ktx.Firebase
 import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -230,7 +237,7 @@ class ProfileViewModel : ViewModel() {
                     roomTypePreference = state.roomTypePreference!!
                 )
 
-                ProfileRepository.saveUserProfile(profile)
+                ProfileRepository.saveUserProfile(uid, profile)
 
                 _uiState.value = _uiState.value.copy(
                     isSaving = false,
