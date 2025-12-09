@@ -30,7 +30,9 @@ import kotlinx.coroutines.launch
 val apartmentList = listOf(
     Apartment("Waterfront Apartment", R.drawable.waterfront),
     Apartment("Palisade Properties", R.drawable.palisade),
-    Apartment("Aberdeen Apartments", R.drawable.aberdeen)
+    Apartment("Aberdeen Apartments", R.drawable.aberdeen),
+    Apartment("140 Iota Courts", R.drawable.iota),
+    Apartment("The Langdon Apartment", R.drawable.langdon)
 )
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")

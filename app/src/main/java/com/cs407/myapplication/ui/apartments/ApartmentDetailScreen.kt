@@ -22,6 +22,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.cs407.myapplication.R
 import com.cs407.myapplication.ui.components.Apartment
+import android.util.Log
+
 
 @Composable
 fun ApartmentDetailScreen(
@@ -66,7 +68,9 @@ fun ApartmentDetailScreen(
             R.drawable.langdongallary3,
             R.drawable.langdongallary4
         )
-        else -> listOf(apartment.imageRes)
+        else -> {
+            listOf(apartment.imageRes)
+        }
     }
 
     Column(
