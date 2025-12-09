@@ -26,16 +26,16 @@ object ApartmentDetails {
             ),
             ApartmentEntity(
                 id = 3,
-                name = "Landon",
+                name = "Langdon",
                 address = "",
-                coordinates = "",
+                coordinates = "43.07566, -89.39650",
                 utilities = "Wifi"
             ),
             ApartmentEntity(
                 id = 4,
                 name = "Iota Courts",
                 address = "",
-                coordinates = "43.0730556, -89.4011111",
+                coordinates = "43.07780, -89.39346",
                 utilities = "Wifi"
             ),
             ApartmentEntity(
@@ -45,6 +45,7 @@ object ApartmentDetails {
                 coordinates = "43.07321,-89.39356",
                 utilities = "Wifi"
             )
+
         )
 
         // Floorplans
