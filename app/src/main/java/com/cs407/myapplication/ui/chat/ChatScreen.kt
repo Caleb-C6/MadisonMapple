@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Send
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -12,19 +13,32 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 
-
 data class Message(val text: String, val isUser: Boolean)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ChatScreen(viewModel: ChatViewModel = viewModel()) {
-
+fun ChatScreen(
+    onBackClick: () -> Unit = {},  // Add this parameter for navigation
+    viewModel: ChatViewModel = viewModel()
+) {
     // We now read messages from the ViewModel
     val messages = viewModel.messages
     var userInput by remember { mutableStateOf("") }
 
     Scaffold(
-        topBar = { TopAppBar(title = { Text("Chat with Fred") }) },
+        topBar = {
+            TopAppBar(
+                title = { Text("Chat with Fred") },
+                navigationIcon = {
+                    IconButton(onClick = onBackClick) {
+                        Icon(
+                            imageVector = Icons.Default.ArrowBack,
+                            contentDescription = "Back to Map"
+                        )
+                    }
+                }
+            )
+        },
         bottomBar = {
             Row(
                 modifier = Modifier
@@ -62,14 +76,13 @@ fun ChatScreen(viewModel: ChatViewModel = viewModel()) {
                 .padding(paddingValues)
                 .padding(horizontal = 8.dp),
 
-        ) {
+            ) {
             items(messages) { message ->
                 MessageBubble(message = message)
             }
         }
     }
 }
-
 
 @Composable
 fun MessageBubble(message: Message) {

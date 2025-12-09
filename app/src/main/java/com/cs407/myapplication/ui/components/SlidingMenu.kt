@@ -97,7 +97,7 @@ fun SlidingMenu() {
 
                     NavigationDrawerItem(label = { Text("Roommates") },
                         selected = currentRoute == "roommates",
-                        onClick = {
+                                onClick = {
                             scope.launch { drawerState.close() }
                             navController.navigate("roommates") { launchSingleTop = true }
                         }
@@ -132,7 +132,18 @@ fun SlidingMenu() {
                         composable("login") { LoginScreen(navController) }
                         composable("signUp") { SignUpScreen(navController) }
                         composable("home") { MapScreen() }
-                        composable("chat") { ChatScreen() }
+
+                        composable("chat") {
+                            ChatScreen(
+                                onBackClick = {
+                                    // This will make the back arrow work
+                                    navController.navigate("home") {
+                                        launchSingleTop = true
+                                    }
+                                }
+                            )
+                        }
+
                         composable("roommates") { RoommateBrowseScreen() }
 
                         composable("apartments") {
