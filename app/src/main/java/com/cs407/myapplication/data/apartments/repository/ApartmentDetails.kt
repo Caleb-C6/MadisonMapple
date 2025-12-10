@@ -13,35 +13,35 @@ object ApartmentDetails {
             ApartmentEntity(
                 id = 1,
                 name = "Waterfront",
-                address = "",
+                address = "633 N Henry St, Madison, WI 53703",
                 coordinates = "43.07761,-89.39298",
                 utilities = "Wifi"
             ),
             ApartmentEntity(
                 id = 2,
                 name = "Palisade",
-                address = "",
+                address = "535 W Johnson St, Madison, WI 53703",
                 coordinates = "43.07174,-89.39501",
                 utilities = "Wifi"
             ),
             ApartmentEntity(
                 id = 3,
                 name = "Langdon",
-                address = "",
+                address = "633 Langdon St, Madison, WI 53703",
                 coordinates = "43.07566, -89.39650",
                 utilities = "Wifi"
             ),
             ApartmentEntity(
                 id = 4,
                 name = "Iota Courts",
-                address = "",
+                address = "140 Iota Ct, Madison, WI 53703",
                 coordinates = "43.07780, -89.39346",
                 utilities = "Wifi"
             ),
             ApartmentEntity(
                 id = 5,
                 name = "Aberdeen Apartments",
-                address = "",
+                address = "437 W Gorham St, Madison, WI 53703",
                 coordinates = "43.07321,-89.39356",
                 utilities = "Wifi"
             )

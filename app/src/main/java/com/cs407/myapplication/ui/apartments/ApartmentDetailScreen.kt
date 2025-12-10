@@ -1,5 +1,6 @@
 package com.cs407.myapplication.ui.apartments
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -16,19 +17,53 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.cs407.myapplication.R
-import com.cs407.myapplication.ui.components.Apartment
-import android.util.Log
-
+import com.cs407.myapplication.data.apartments.local.db.ApartmentDatabase
+import com.cs407.myapplication.data.apartments.local.entities.ApartmentEntity
+import com.cs407.myapplication.data.apartments.local.entities.FloorPlanEntity
+import com.cs407.myapplication.data.apartments.repository.ApartmentRepository
 
 @Composable
 fun ApartmentDetailScreen(
-    apartment: Apartment,
+    apartmentName: String,
     onBackClick: () -> Unit = {}
+) {
+    val context = LocalContext.current
+    val db = remember { ApartmentDatabase.getInstance(context) }
+    val repository = remember { ApartmentRepository(db.apartmentDao()) }
+    val viewModel = remember { ApartmentDetailViewModel(repository) }
+
+    val apartment by viewModel.apartment.collectAsState()
+    val floorPlans by viewModel.floorPlans.collectAsState()
+
+    // Load apartment data from DB
+    LaunchedEffect(apartmentName) {
+        viewModel.loadApartment(apartmentName)
+    }
+
+    if (apartment == null) {
+        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            CircularProgressIndicator()
+        }
+    } else {
+        ApartmentDetailContent(
+            apartment = apartment!!,
+            floorPlans = floorPlans,
+            onBackClick = onBackClick
+        )
+    }
+}
+
+@Composable
+fun ApartmentDetailContent(
+    apartment: ApartmentEntity,
+    floorPlans: List<FloorPlanEntity>,
+    onBackClick: () -> Unit
 ) {
     var currentImageIndex by remember { mutableStateOf(0) }
 
@@ -68,9 +103,7 @@ fun ApartmentDetailScreen(
             R.drawable.langdongallary3,
             R.drawable.langdongallary4
         )
-        else -> {
-            listOf(apartment.imageRes)
-        }
+        else -> listOf(R.drawable.waterfront)
     }
 
     Column(
@@ -78,6 +111,7 @@ fun ApartmentDetailScreen(
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
     ) {
+        // ---- Top Bar ----
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -85,19 +119,14 @@ fun ApartmentDetailScreen(
                 .padding(16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            IconButton(
-                onClick = onBackClick,
-                modifier = Modifier.size(24.dp)
-            ) {
+            IconButton(onClick = onBackClick, modifier = Modifier.size(24.dp)) {
                 Icon(
                     imageVector = Icons.Default.ArrowBack,
                     contentDescription = "Back",
                     tint = Color.White
                 )
             }
-
             Spacer(modifier = Modifier.width(16.dp))
-
             Text(
                 text = apartment.name,
                 style = MaterialTheme.typography.headlineSmall,
@@ -106,6 +135,7 @@ fun ApartmentDetailScreen(
             )
         }
 
+        // ---- Image Gallery ----
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -165,43 +195,47 @@ fun ApartmentDetailScreen(
             )
         }
 
+        // ---- Apartment Info ----
         Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp)
         ) {
             InfoCard(
-                title = "Location",
-                content = "Address information will be added from database"
-            )
-
-            Spacer(modifier = Modifier.height(12.dp))
-
-            InfoCard(
                 title = "Address",
-                content = "Street address will be loaded from database"
+                content = if (apartment.address.isNotBlank())
+                    apartment.address else "No address data available"
             )
 
             Spacer(modifier = Modifier.height(12.dp))
 
             InfoCard(
-                title = "Features",
-                content = "Apartment features and amenities will be displayed here"
+                title = "Coordinates",
+                content = apartment.coordinates
             )
 
             Spacer(modifier = Modifier.height(12.dp))
 
             InfoCard(
-                title = "Contact",
-                content = "Contact information will be available soon"
+                title = "Utilities / Features",
+                content = apartment.utilities
             )
 
             Spacer(modifier = Modifier.height(12.dp))
 
-            InfoCard(
-                title = "Additional Information",
-                content = "Detailed apartment description will be loaded from the database"
-            )
+            if (floorPlans.isNotEmpty()) {
+                InfoCard(
+                    title = "Floor Plans",
+                    content = floorPlans.joinToString("\n") {
+                        "${it.bedsBath} - ${it.size} sqft - \$${it.rent}"
+                    }
+                )
+            } else {
+                InfoCard(
+                    title = "Floor Plans",
+                    content = "No floor plans available"
+                )
+            }
         }
     }
 }
@@ -213,9 +247,7 @@ fun InfoCard(title: String, content: String) {
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
     ) {
-        Column(
-            modifier = Modifier.padding(16.dp)
-        ) {
+        Column(modifier = Modifier.padding(16.dp)) {
             Text(
                 text = title,
                 style = MaterialTheme.typography.titleMedium,

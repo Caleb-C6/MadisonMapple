@@ -35,14 +35,19 @@ enum class SortOrder {
 fun ApartmentsListScreen(
     onApartmentClick: (Apartment) -> Unit = {}
 ) {
-    // Original apartments list
-    val originalApartments = listOf(
-        Apartment("Waterfront Apartment", R.drawable.waterfront),
-        Apartment("Palisade Properties", R.drawable.palisade),
-        Apartment("Aberdeen Apartments", R.drawable.aberdeen),
-        Apartment("140 Iota Courts", R.drawable.iota),
-        Apartment("The Langdon Apartment", R.drawable.langdon)
-    )
+    // Use display names from the mapper
+    val originalApartments = ApartmentNameMapper.getAllDisplayNames().map { displayName ->
+        // Helper function to get image resource for display name
+        val imageRes = when (displayName) {
+            "Waterfront Apartment" -> R.drawable.waterfront
+            "Palisade Properties" -> R.drawable.palisade
+            "Aberdeen Apartments" -> R.drawable.aberdeen
+            "140 Iota Courts" -> R.drawable.iota
+            "The Langdon Apartment" -> R.drawable.langdon
+            else -> R.drawable.waterfront // default
+        }
+        Apartment(displayName, imageRes)
+    }
 
     // State for search query
     var searchQuery by remember { mutableStateOf("") }
@@ -174,7 +179,6 @@ fun ApartmentsListScreen(
         }
     }
 }
-
 @Composable
 private fun SortDropdownMenu(
     sortOrder: SortOrder,

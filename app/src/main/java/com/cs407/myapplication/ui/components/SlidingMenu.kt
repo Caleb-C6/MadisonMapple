@@ -18,6 +18,7 @@ import androidx.navigation.navArgument
 import com.cs407.myapplication.R
 import com.cs407.myapplication.ui.apartments.ApartmentDetailScreen
 import com.cs407.myapplication.ui.apartments.ApartmentsListScreen
+import com.cs407.myapplication.ui.apartments.ApartmentNameMapper  // Add this import
 import com.cs407.myapplication.ui.auth.AuthManager
 import com.cs407.myapplication.ui.auth.LoginScreen
 import com.cs407.myapplication.ui.auth.SignUpScreen
@@ -27,13 +28,19 @@ import com.cs407.myapplication.ui.profile.ProfileScreen
 import com.cs407.myapplication.ui.roommates.RoommateBrowseScreen
 import kotlinx.coroutines.launch
 
-val apartmentList = listOf(
-    Apartment("Waterfront Apartment", R.drawable.waterfront),
-    Apartment("Palisade Properties", R.drawable.palisade),
-    Apartment("Aberdeen Apartments", R.drawable.aberdeen),
-    Apartment("140 Iota Courts", R.drawable.iota),
-    Apartment("The Langdon Apartment", R.drawable.langdon)
-)
+// Update the apartment list to use display names from the mapper
+val apartmentList = ApartmentNameMapper.getAllDisplayNames().map { displayName ->
+    // Helper function to get image resource for display name
+    val imageRes = when (displayName) {
+        "Waterfront Apartment" -> R.drawable.waterfront
+        "Palisade Properties" -> R.drawable.palisade
+        "Aberdeen Apartments" -> R.drawable.aberdeen
+        "140 Iota Courts" -> R.drawable.iota
+        "The Langdon Apartment" -> R.drawable.langdon
+        else -> R.drawable.waterfront // default
+    }
+    Apartment(displayName, imageRes)
+}
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
@@ -97,7 +104,7 @@ fun SlidingMenu() {
 
                     NavigationDrawerItem(label = { Text("Roommates") },
                         selected = currentRoute == "roommates",
-                                onClick = {
+                        onClick = {
                             scope.launch { drawerState.close() }
                             navController.navigate("roommates") { launchSingleTop = true }
                         }
@@ -160,12 +167,13 @@ fun SlidingMenu() {
                         ) { backStackEntry ->
                             val apartmentName = backStackEntry.arguments?.getString("apartmentName") ?: ""
 
+                            // Find the apartment from our list (optional, for image)
                             val apartment = apartmentList.find { it.name == apartmentName }
                                 ?: Apartment("Unknown", R.drawable.waterfront)
 
                             ApartmentDetailScreen(
-                                apartment = apartment,
-                                onBackClick = { navController.popBackStack() }
+                                apartmentName = apartmentName,
+                                onBackClick = { navController.popBackStack()  }
                             )
                         }
 

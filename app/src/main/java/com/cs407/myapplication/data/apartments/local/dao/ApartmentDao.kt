@@ -23,4 +23,8 @@ interface ApartmentDao {
 
     @Query("SELECT * FROM floorplans WHERE apartmentId = :apartmentId")
     suspend fun getFloorPlans(apartmentId: Int): List<FloorPlanEntity>
+
+    @Query("SELECT * FROM apartments WHERE LOWER(name) LIKE '%' || LOWER(:name) || '%' LIMIT 1")
+    suspend fun getApartmentByName(name: String): ApartmentEntity?
+
 }
