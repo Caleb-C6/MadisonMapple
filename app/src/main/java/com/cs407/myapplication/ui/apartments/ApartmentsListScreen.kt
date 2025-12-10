@@ -17,17 +17,26 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import com.cs407.myapplication.R
 import com.cs407.myapplication.ui.components.Apartment
 import androidx.compose.ui.text.style.TextAlign
+import kotlinx.coroutines.launch
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.cs407.myapplication.data.apartments.local.db.ApartmentDatabase
+import com.cs407.myapplication.data.apartments.repository.ApartmentRepository
 
-// Define sort order enum
+// Update the SortOrder enum
 enum class SortOrder {
     A_TO_Z,
     Z_TO_A,
+    CHEAPEST,
+    MOST_EXPENSIVE,
+    SMALLEST,
+    LARGEST,
     NONE
 }
 
@@ -35,19 +44,15 @@ enum class SortOrder {
 fun ApartmentsListScreen(
     onApartmentClick: (Apartment) -> Unit = {}
 ) {
-    // Use display names from the mapper
-    val originalApartments = ApartmentNameMapper.getAllDisplayNames().map { displayName ->
-        // Helper function to get image resource for display name
-        val imageRes = when (displayName) {
-            "Waterfront Apartment" -> R.drawable.waterfront
-            "Palisade Properties" -> R.drawable.palisade
-            "Aberdeen Apartments" -> R.drawable.aberdeen
-            "140 Iota Courts" -> R.drawable.iota
-            "The Langdon Apartment" -> R.drawable.langdon
-            else -> R.drawable.waterfront // default
-        }
-        Apartment(displayName, imageRes)
-    }
+    val context = LocalContext.current
+    val database = remember { ApartmentDatabase.getInstance(context) }
+    val repository = remember { ApartmentRepository(database.apartmentDao()) }
+    val viewModel: ApartmentListViewModel = viewModel(
+        factory = ApartmentListViewModelFactory(repository)
+    )
+
+    val apartments by viewModel.apartments.collectAsState()
+    val isLoading by viewModel.isLoading.collectAsState()
 
     // State for search query
     var searchQuery by remember { mutableStateOf("") }
@@ -55,21 +60,21 @@ fun ApartmentsListScreen(
     // State for sorting
     var sortOrder by remember { mutableStateOf(SortOrder.NONE) }
 
-    // Filter and sort apartments
-    val filteredApartments = remember(searchQuery, sortOrder) {
-        var result = originalApartments.filter { apartment ->
-            searchQuery.isEmpty() ||
-                    apartment.name.contains(searchQuery, ignoreCase = true)
-        }
+    // Load apartments when sort order changes
+    LaunchedEffect(sortOrder) {
+        viewModel.loadApartments(sortOrder)
+    }
 
-        // Apply sorting
-        result = when (sortOrder) {
-            SortOrder.A_TO_Z -> result.sortedBy { it.name }
-            SortOrder.Z_TO_A -> result.sortedByDescending { it.name }
-            SortOrder.NONE -> result
+    // Filter apartments based on search query
+    val filteredApartments = remember(apartments, searchQuery) {
+        if (searchQuery.isEmpty()) {
+            apartments
+        } else {
+            apartments.filter { apartmentListItem ->
+                val displayName = ApartmentNameMapper.getDisplayName(apartmentListItem.name)
+                displayName.contains(searchQuery, ignoreCase = true)
+            }
         }
-
-        result
     }
 
     Column(
@@ -90,7 +95,7 @@ fun ApartmentsListScreen(
             onSearchQueryChange = { searchQuery = it },
             onClearSearch = {
                 searchQuery = ""
-                sortOrder = SortOrder.NONE // Reset sort when clearing search
+                sortOrder = SortOrder.NONE
             },
             modifier = Modifier
                 .fillMaxWidth()
@@ -119,14 +124,21 @@ fun ApartmentsListScreen(
             Spacer(modifier = Modifier.width(8.dp))
 
             // Right side: Sort button only
-            SortDropdownMenu(
+            SimpleSortDropdownMenu(
                 sortOrder = sortOrder,
                 onSortOrderChange = { sortOrder = it }
             )
         }
 
         // Apartments List
-        if (filteredApartments.isEmpty()) {
+        if (isLoading) {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator()
+            }
+        } else if (filteredApartments.isEmpty()) {
             Box(
                 modifier = Modifier
                     .fillMaxSize()
@@ -169,101 +181,121 @@ fun ApartmentsListScreen(
                 verticalArrangement = Arrangement.spacedBy(12.dp),
                 modifier = Modifier.fillMaxSize()
             ) {
-                items(filteredApartments) { apartment ->
-                    ApartmentCard(
-                        apartment = apartment,
-                        onClick = { onApartmentClick(apartment) }
+                items(filteredApartments) { apartmentListItem ->
+                    SimpleApartmentCard(
+                        apartmentListItem = apartmentListItem,
+                        onClick = {
+                            val displayName = ApartmentNameMapper.getDisplayName(apartmentListItem.name)
+                            val imageRes = getImageResourceForDisplayName(displayName)
+                            onApartmentClick(Apartment(displayName, imageRes))
+                        }
                     )
                 }
             }
         }
     }
 }
+
 @Composable
-private fun SortDropdownMenu(
+private fun SimpleSortDropdownMenu(
     sortOrder: SortOrder,
     onSortOrderChange: (SortOrder) -> Unit
 ) {
     var expanded by remember { mutableStateOf(false) }
 
     Box {
-        // Sort Button
+        // Simple Sort Button
         FilterChip(
             selected = sortOrder != SortOrder.NONE,
             onClick = { expanded = true },
             label = {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(4.dp)
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Sort,
-                        contentDescription = "Sort",
-                        modifier = Modifier.size(16.dp)
-                    )
-                    Text(
-                        text = when (sortOrder) {
-                            SortOrder.A_TO_Z -> "A → Z"
-                            SortOrder.Z_TO_A -> "Z → A"
-                            SortOrder.NONE -> "Sort"
-                        }
-                    )
-                }
+                Text(
+                    text = when (sortOrder) {
+                        SortOrder.A_TO_Z -> "A to Z"
+                        SortOrder.Z_TO_A -> "Z to A"
+                        SortOrder.CHEAPEST -> "Cheapest"
+                        SortOrder.MOST_EXPENSIVE -> "Most Expensive"
+                        SortOrder.SMALLEST -> "Smallest"
+                        SortOrder.LARGEST -> "Largest"
+                        SortOrder.NONE -> "Sort"
+                    }
+                )
             },
             trailingIcon = {
                 Icon(
                     imageVector = Icons.Default.ArrowDropDown,
-                    contentDescription = "Sort options",
-                    modifier = Modifier.size(FilterChipDefaults.IconSize)
+                    contentDescription = "Sort options"
                 )
             }
         )
 
-        // Dropdown Menu
+        // Simple Dropdown Menu - Only text, no icons
         DropdownMenu(
             expanded = expanded,
             onDismissRequest = { expanded = false }
         ) {
+            // Alphabetical Sorting
             DropdownMenuItem(
-                text = { Text("A → Z (Ascending)") },
+                text = { Text("A to Z") },
                 onClick = {
                     onSortOrderChange(SortOrder.A_TO_Z)
                     expanded = false
-                },
-                leadingIcon = {
-                    Icon(
-                        imageVector = Icons.Default.ArrowUpward,
-                        contentDescription = null
-                    )
                 }
             )
             DropdownMenuItem(
-                text = { Text("Z → A (Descending)") },
+                text = { Text("Z to A") },
                 onClick = {
                     onSortOrderChange(SortOrder.Z_TO_A)
                     expanded = false
-                },
-                leadingIcon = {
-                    Icon(
-                        imageVector = Icons.Default.ArrowDownward,
-                        contentDescription = null
-                    )
                 }
             )
+
             Divider()
+
+            // Price Sorting
+            DropdownMenuItem(
+                text = { Text("Cheapest") },
+                onClick = {
+                    onSortOrderChange(SortOrder.CHEAPEST)
+                    expanded = false
+                }
+            )
+            DropdownMenuItem(
+                text = { Text("Most Expensive") },
+                onClick = {
+                    onSortOrderChange(SortOrder.MOST_EXPENSIVE)
+                    expanded = false
+                }
+            )
+
+            Divider()
+
+            // Size Sorting
+            DropdownMenuItem(
+                text = { Text("Smallest") },
+                onClick = {
+                    onSortOrderChange(SortOrder.SMALLEST)
+                    expanded = false
+                }
+            )
+            DropdownMenuItem(
+                text = { Text("Largest") },
+                onClick = {
+                    onSortOrderChange(SortOrder.LARGEST)
+                    expanded = false
+                }
+            )
+
+            Divider()
+
+            // Clear Sort
             DropdownMenuItem(
                 text = { Text("Clear Sort") },
                 onClick = {
                     onSortOrderChange(SortOrder.NONE)
                     expanded = false
                 },
-                enabled = sortOrder != SortOrder.NONE,
-                leadingIcon = {
-                    Icon(
-                        imageVector = Icons.Default.Clear,
-                        contentDescription = null
-                    )
-                }
+                enabled = sortOrder != SortOrder.NONE
             )
         }
     }
@@ -271,9 +303,74 @@ private fun SortDropdownMenu(
 
 private fun getSortText(sortOrder: SortOrder): String {
     return when (sortOrder) {
-        SortOrder.A_TO_Z -> "Sorted A → Z"
-        SortOrder.Z_TO_A -> "Sorted Z → A"
+        SortOrder.A_TO_Z -> "Sorted A to Z"
+        SortOrder.Z_TO_A -> "Sorted Z to A"
+        SortOrder.CHEAPEST -> "Sorted by Price (Low to High)"
+        SortOrder.MOST_EXPENSIVE -> "Sorted by Price (High to Low)"
+        SortOrder.SMALLEST -> "Sorted by Size (Small to Large)"
+        SortOrder.LARGEST -> "Sorted by Size (Large to Small)"
         SortOrder.NONE -> ""
+    }
+}
+
+@Composable
+fun SimpleApartmentCard(
+    apartmentListItem: ApartmentListViewModel.ApartmentListItem,
+    onClick: () -> Unit
+) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(140.dp)
+            .clickable { onClick() },
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(12.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            // Get image for this apartment
+            val displayName = ApartmentNameMapper.getDisplayName(apartmentListItem.name)
+            val imageRes = getImageResourceForDisplayName(displayName)
+
+            Image(
+                painter = painterResource(id = imageRes),
+                contentDescription = "Image of $displayName",
+                modifier = Modifier
+                    .size(110.dp)
+                    .clip(MaterialTheme.shapes.medium)
+                    .background(Color.LightGray),
+                contentScale = ContentScale.Crop
+            )
+
+            Spacer(modifier = Modifier.width(16.dp))
+
+            Column(
+                modifier = Modifier.weight(1f),
+                verticalArrangement = Arrangement.Center
+            ) {
+                // Only show the apartment name - no extra details
+                Text(
+                    text = displayName,
+                    style = MaterialTheme.typography.titleMedium,
+                    modifier = Modifier.padding(bottom = 4.dp)
+                )
+            }
+        }
+    }
+}
+
+// Helper function to get image resource
+private fun getImageResourceForDisplayName(displayName: String): Int {
+    return when (displayName) {
+        "Waterfront Apartment" -> R.drawable.waterfront
+        "Palisade Properties" -> R.drawable.palisade
+        "Aberdeen Apartments" -> R.drawable.aberdeen
+        "140 Iota Courts" -> R.drawable.iota
+        "The Langdon Apartment" -> R.drawable.langdon
+        else -> R.drawable.waterfront
     }
 }
 
@@ -321,46 +418,17 @@ fun SearchBar(
     )
 }
 
+// Keep the old ApartmentCard for compatibility
 @Composable
 fun ApartmentCard(
     apartment: Apartment,
     onClick: () -> Unit
 ) {
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(140.dp)
-            .clickable { onClick() },
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(12.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Image(
-                painter = painterResource(id = apartment.imageRes),
-                contentDescription = "Image of ${apartment.name}",
-                modifier = Modifier
-                    .size(110.dp)
-                    .clip(MaterialTheme.shapes.medium)
-                    .background(Color.LightGray),
-                contentScale = ContentScale.Crop
-            )
-
-            Spacer(modifier = Modifier.width(16.dp))
-
-            Column(
-                modifier = Modifier.weight(1f),
-                verticalArrangement = Arrangement.Center
-            ) {
-                Text(
-                    text = apartment.name,
-                    style = MaterialTheme.typography.titleMedium,
-                    modifier = Modifier.padding(bottom = 4.dp)
-                )
-            }
-        }
-    }
+    SimpleApartmentCard(
+        apartmentListItem = ApartmentListViewModel.ApartmentListItem(
+            id = 0,
+            name = apartment.name
+        ),
+        onClick = onClick
+    )
 }

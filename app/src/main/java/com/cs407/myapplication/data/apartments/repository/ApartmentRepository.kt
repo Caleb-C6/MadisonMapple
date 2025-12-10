@@ -11,4 +11,21 @@ class ApartmentRepository(private val dao: ApartmentDao) {
 
     suspend fun getFloorPlans(apartmentId: Int): List<FloorPlanEntity> =
         dao.getFloorPlans(apartmentId)
+
+    // NEW METHODS FOR SORTING
+
+    suspend fun getAllApartments(): List<ApartmentEntity> =
+        dao.getApartments()
+
+    suspend fun getApartmentsByCheapest(): List<ApartmentEntity> =
+        dao.getApartmentsByCheapest()
+
+    suspend fun getApartmentsByMostExpensive(): List<ApartmentEntity> =
+        dao.getApartmentsByMostExpensive()
+
+    suspend fun getApartmentsBySmallest(): List<ApartmentEntity> =
+        dao.getApartmentsBySmallest()
+
+    suspend fun getApartmentsByLargest(): List<ApartmentEntity> =
+        dao.getApartmentsByLargest()
 }
