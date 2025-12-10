@@ -1,6 +1,5 @@
 package com.cs407.myapplication.ui.apartments
 
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -9,8 +8,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowForward
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -41,14 +39,19 @@ fun ApartmentDetailScreen(
     val apartment by viewModel.apartment.collectAsState()
     val floorPlans by viewModel.floorPlans.collectAsState()
 
-    // Load apartment data from DB
     LaunchedEffect(apartmentName) {
         viewModel.loadApartment(apartmentName)
     }
 
     if (apartment == null) {
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            CircularProgressIndicator()
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                CircularProgressIndicator()
+                Text("Loading apartment details...")
+            }
         }
     } else {
         ApartmentDetailContent(
@@ -68,14 +71,14 @@ fun ApartmentDetailContent(
     var currentImageIndex by remember { mutableStateOf(0) }
 
     val galleryImages = when (apartment.name) {
-        "Waterfront Apartment" -> listOf(
+        "Waterfront" -> listOf(
             R.drawable.waterfront,
             R.drawable.waterfontgallary1,
             R.drawable.waterfontgallary2,
             R.drawable.waterfontgallary3,
             R.drawable.waterfontgallary4
         )
-        "Palisade Properties" -> listOf(
+        "Palisade" -> listOf(
             R.drawable.palisade,
             R.drawable.palisadegallary1,
             R.drawable.palisadegallary2,
@@ -89,14 +92,14 @@ fun ApartmentDetailContent(
             R.drawable.aberdeengallary3,
             R.drawable.aberdeengallary4
         )
-        "140 Iota Courts" -> listOf(
+        "Iota Courts" -> listOf(
             R.drawable.iota,
             R.drawable.iotagallary1,
             R.drawable.iotagallary2,
             R.drawable.iotagallary3,
             R.drawable.iotagallary4
         )
-        "The Langdon Apartment" -> listOf(
+        "Langdon" -> listOf(
             R.drawable.langdon,
             R.drawable.langdongallary1,
             R.drawable.langdongallary2,
@@ -111,7 +114,7 @@ fun ApartmentDetailContent(
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
     ) {
-        // ---- Top Bar ----
+        // ---- Custom Top Bar ----
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -119,7 +122,10 @@ fun ApartmentDetailContent(
                 .padding(16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            IconButton(onClick = onBackClick, modifier = Modifier.size(24.dp)) {
+            IconButton(
+                onClick = onBackClick,
+                modifier = Modifier.size(24.dp)
+            ) {
                 Icon(
                     imageVector = Icons.Default.ArrowBack,
                     contentDescription = "Back",
@@ -143,56 +149,65 @@ fun ApartmentDetailContent(
         ) {
             Image(
                 painter = painterResource(id = galleryImages[currentImageIndex]),
-                contentDescription = "Gallery image ${currentImageIndex + 1}",
+                contentDescription = "Gallery image",
                 modifier = Modifier.fillMaxSize(),
                 contentScale = ContentScale.Crop
             )
 
-            Row(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(horizontal = 16.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Icon(
-                    imageVector = Icons.Default.ArrowBack,
-                    contentDescription = "Previous image",
-                    modifier = Modifier
-                        .size(40.dp)
-                        .background(Color.Black.copy(alpha = 0.4f), RoundedCornerShape(50))
-                        .clickable {
-                            currentImageIndex =
-                                (currentImageIndex - 1 + galleryImages.size) % galleryImages.size
-                        }
-                        .padding(8.dp),
-                    tint = Color.White
-                )
-
-                Icon(
-                    imageVector = Icons.Default.ArrowForward,
-                    contentDescription = "Next image",
-                    modifier = Modifier
-                        .size(40.dp)
-                        .background(Color.Black.copy(alpha = 0.4f), RoundedCornerShape(50))
-                        .clickable {
-                            currentImageIndex = (currentImageIndex + 1) % galleryImages.size
-                        }
-                        .padding(8.dp),
-                    tint = Color.White
-                )
-            }
-
+            // Image counter
             Text(
                 text = "${currentImageIndex + 1}/${galleryImages.size}",
                 modifier = Modifier
                     .align(Alignment.BottomEnd)
                     .padding(16.dp)
-                    .background(Color.Black.copy(alpha = 0.6f), RoundedCornerShape(8.dp))
+                    .background(
+                        Color.Black.copy(alpha = 0.6f),
+                        RoundedCornerShape(8.dp)
+                    )
                     .padding(horizontal = 12.dp, vertical = 6.dp),
                 color = Color.White,
                 fontSize = 14.sp
             )
+
+            // Navigation arrows
+            if (galleryImages.size > 1) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .align(Alignment.Center),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    IconButton(
+                        onClick = {
+                            currentImageIndex = (currentImageIndex - 1 + galleryImages.size) % galleryImages.size
+                        },
+                        modifier = Modifier
+                            .background(Color.Black.copy(alpha = 0.3f), RoundedCornerShape(50))
+                            .padding(8.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.ChevronLeft,
+                            contentDescription = "Previous",
+                            tint = Color.White
+                        )
+                    }
+
+                    IconButton(
+                        onClick = {
+                            currentImageIndex = (currentImageIndex + 1) % galleryImages.size
+                        },
+                        modifier = Modifier
+                            .background(Color.Black.copy(alpha = 0.3f), RoundedCornerShape(50))
+                            .padding(8.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.ChevronRight,
+                            contentDescription = "Next",
+                            tint = Color.White
+                        )
+                    }
+                }
+            }
         }
 
         // ---- Apartment Info ----
@@ -201,65 +216,286 @@ fun ApartmentDetailContent(
                 .fillMaxWidth()
                 .padding(16.dp)
         ) {
-            InfoCard(
-                title = "Address",
-                content = if (apartment.address.isNotBlank())
-                    apartment.address else "No address data available"
+            // Apartment name header
+            Text(
+                text = apartment.name,
+                style = MaterialTheme.typography.headlineMedium,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.padding(bottom = 16.dp)
+            )
+
+            // Address section
+            SectionHeader("📍 Address")
+            InfoRow(
+                if (apartment.address.isNotBlank()) apartment.address else "No address available"
             )
 
             Spacer(modifier = Modifier.height(12.dp))
 
-            InfoCard(
-                title = "Coordinates",
-                content = apartment.coordinates
-            )
+            // Coordinates section
+            SectionHeader("🗺️ Coordinates")
+            InfoRow(formatCoordinates(apartment.coordinates))
 
             Spacer(modifier = Modifier.height(12.dp))
 
-            InfoCard(
-                title = "Utilities / Features",
-                content = apartment.utilities
-            )
+            // Utilities section
+            SectionHeader("🔌 Included Utilities")
+            InfoRow(apartment.utilities)
 
             Spacer(modifier = Modifier.height(12.dp))
+
+            // Amenities section
+            SectionHeader("🏊 Amenities")
+            if (apartment.amenities.isNotBlank()) {
+                // Split amenities by comma and display as bullet points
+                val amenitiesList = apartment.amenities.split(",").map { it.trim() }
+                Column {
+                    amenitiesList.forEach { amenity ->
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 4.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = "•",
+                                modifier = Modifier.padding(end = 8.dp),
+                                color = MaterialTheme.colorScheme.primary
+                            )
+                            Text(
+                                text = amenity,
+                                style = MaterialTheme.typography.bodyLarge,
+                                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f)
+                            )
+                        }
+                    }
+                }
+            } else {
+                InfoRow("No amenities listed")
+            }
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            // Contact section
+            SectionHeader("📞 Contact Information")
+            Column {
+                // Phone
+                if (apartment.contactPhone.isNotBlank() && apartment.contactPhone != "No phone") {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.padding(bottom = 8.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Phone,
+                            contentDescription = "Phone",
+                            modifier = Modifier.size(16.dp),
+                            tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f)
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            text = apartment.contactPhone,
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f)
+                        )
+                    }
+                }
+
+                // Email
+                if (apartment.contactEmail.isNotBlank() && apartment.contactEmail != "No email") {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.padding(bottom = 8.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Email,
+                            contentDescription = "Email",
+                            modifier = Modifier.size(16.dp),
+                            tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f)
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            text = apartment.contactEmail,
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f)
+                        )
+                    }
+                }
+
+                // If no contact info
+                if ((apartment.contactPhone.isBlank() || apartment.contactPhone == "No phone") &&
+                    (apartment.contactEmail.isBlank() || apartment.contactEmail == "No email")) {
+                    InfoRow("No contact information available")
+                }
+            }
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            // Floor Plans section
+            SectionHeader("🏢 Floor Plans")
 
             if (floorPlans.isNotEmpty()) {
-                InfoCard(
-                    title = "Floor Plans",
-                    content = floorPlans.joinToString("\n") {
-                        "${it.bedsBath} - ${it.size} sqft - \$${it.rent}"
+                Spacer(modifier = Modifier.height(8.dp))
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    floorPlans.forEach { floorPlan ->
+                        FloorPlanCardSimple(floorPlan = floorPlan)
                     }
-                )
+                }
             } else {
-                InfoCard(
-                    title = "Floor Plans",
-                    content = "No floor plans available"
+                InfoRow("No floor plans available")
+            }
+
+            Spacer(modifier = Modifier.height(24.dp))
+        }
+    }
+}
+
+@Composable
+private fun SectionHeader(title: String) {
+    Text(
+        text = title,
+        style = MaterialTheme.typography.titleMedium,
+        fontWeight = FontWeight.SemiBold,
+        color = MaterialTheme.colorScheme.onSurface,
+        modifier = Modifier.padding(bottom = 8.dp)
+    )
+}
+
+@Composable
+private fun InfoRow(content: String) {
+    Text(
+        text = content,
+        style = MaterialTheme.typography.bodyLarge,
+        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f),
+        modifier = Modifier.padding(bottom = 16.dp)
+    )
+}
+
+@Composable
+private fun FloorPlanCardSimple(floorPlan: FloorPlanEntity) {
+    Surface(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 4.dp),
+        shape = MaterialTheme.shapes.medium,
+        color = MaterialTheme.colorScheme.surface,
+        shadowElevation = 2.dp
+    ) {
+        Column(
+            modifier = Modifier.padding(16.dp)
+        ) {
+            // Header with beds/bath
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Bed,
+                    contentDescription = null,
+                    modifier = Modifier.size(20.dp),
+                    tint = MaterialTheme.colorScheme.primary
+                )
+                Spacer(modifier = Modifier.width(12.dp))
+                Text(
+                    text = floorPlan.bedsBath,
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.SemiBold,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+            }
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            // Size
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(
+                    imageVector = Icons.Default.SquareFoot,
+                    contentDescription = null,
+                    modifier = Modifier.size(16.dp),
+                    tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    text = "Size: ${formatSize(floorPlan.size)}",
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+            }
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            // Rent
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(
+                    imageVector = Icons.Default.AttachMoney,
+                    contentDescription = null,
+                    modifier = Modifier.size(16.dp),
+                    tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    text = "Rent: ${formatRent(floorPlan.rent)}",
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.onSurface
                 )
             }
         }
     }
 }
 
-@Composable
-fun InfoCard(title: String, content: String) {
-    Card(
-        modifier = Modifier.fillMaxWidth(),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
-    ) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            Text(
-                text = title,
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.primary
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(
-                text = content,
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurface
-            )
+// Helper functions for formatting
+private fun formatCoordinates(coordinates: String): String {
+    return try {
+        val cleaned = coordinates.replace("\\s+".toRegex(), "")
+        if (cleaned.contains(',')) {
+            val parts = cleaned.split(",")
+            if (parts.size >= 2) {
+                val lat = String.format("%.5f", parts[0].toDouble())
+                val lng = String.format("%.5f", parts[1].toDouble())
+                "$lat, $lng"
+            } else {
+                coordinates
+            }
+        } else {
+            coordinates
         }
+    } catch (e: Exception) {
+        coordinates
+    }
+}
+
+private fun formatSize(size: String): String {
+    return try {
+        val parts = size.split("-").map { it.trim() }.map { it.toIntOrNull() }
+        if (parts.size == 2 && parts[0] != null && parts[1] != null) {
+            val formattedMin = String.format("%,d", parts[0]!!)
+            val formattedMax = String.format("%,d", parts[1]!!)
+            "$formattedMin - $formattedMax sq ft"
+        } else {
+            "$size sq ft"
+        }
+    } catch (e: Exception) {
+        "$size sq ft"
+    }
+}
+
+private fun formatRent(rent: String): String {
+    return try {
+        val parts = rent.split("-").map { it.trim() }.map { it.toIntOrNull() }
+        if (parts.size == 2 && parts[0] != null && parts[1] != null) {
+            val formattedMin = String.format("$%,d", parts[0]!!)
+            val formattedMax = String.format("$%,d", parts[1]!!)
+            "$formattedMin - $formattedMax"
+        } else {
+            "$$rent"
+        }
+    } catch (e: Exception) {
+        "$$rent"
     }
 }

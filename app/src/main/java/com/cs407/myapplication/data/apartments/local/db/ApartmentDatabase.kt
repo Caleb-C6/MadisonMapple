@@ -10,7 +10,8 @@ import com.cs407.myapplication.data.apartments.local.dao.ApartmentDao
 
 @Database(
     entities = [ApartmentEntity::class, FloorPlanEntity::class],
-    version = 1
+    version = 2,  // Change from 1 to 2
+    exportSchema = false
 )
 abstract class ApartmentDatabase : RoomDatabase() {
     abstract fun apartmentDao(): ApartmentDao
@@ -25,7 +26,9 @@ abstract class ApartmentDatabase : RoomDatabase() {
                     context.applicationContext,
                     ApartmentDatabase::class.java,
                     "apartments.db"
-                ).build().also { INSTANCE = it }
+                )
+                    .fallbackToDestructiveMigration()  // Add this line to handle schema changes
+                    .build().also { INSTANCE = it }
             }
         }
     }

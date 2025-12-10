@@ -8,44 +8,58 @@ object ApartmentDetails {
 
     suspend fun preload(dao: ApartmentDao) {
 
-        // Apartments
+        // Apartments with new fields
         val apartments = listOf(
             ApartmentEntity(
                 id = 1,
                 name = "Waterfront",
                 address = "633 N Henry St, Madison, WI 53703",
                 coordinates = "43.07761,-89.39298",
-                utilities = "Wifi"
+                utilities = "Wifi",
+                amenities = "Pool, fitness center, private dock, rooftop grills, study lounge",
+                contactPhone = "(608) 409-9963",
+                contactEmail = "staff@palisadeproperty.com"
             ),
             ApartmentEntity(
                 id = 2,
                 name = "Palisade",
                 address = "535 W Johnson St, Madison, WI 53703",
                 coordinates = "43.07174,-89.39501",
-                utilities = "Wifi"
+                utilities = "Wifi",
+                amenities = "Pool, rooftop, fitness center, rooftop grills, free coffee, yoga room, movie room, study lounge, arcade",
+                contactPhone = "(608) 409-9964",
+                contactEmail = "staff@palisadeproperty.com"
             ),
             ApartmentEntity(
                 id = 3,
                 name = "Langdon",
                 address = "633 Langdon St, Madison, WI 53703",
                 coordinates = "43.07566, -89.39650",
-                utilities = "Wifi"
+                utilities = "Wifi",
+                amenities = "Pool, fitness center, private dock, rooftop grills, study lounge",
+                contactPhone = "608-255-3064",
+                contactEmail = "No email"
             ),
             ApartmentEntity(
                 id = 4,
                 name = "Iota Courts",
                 address = "140 Iota Ct, Madison, WI 53703",
                 coordinates = "43.07780, -89.39346",
-                utilities = "Wifi"
+                utilities = "Wifi",
+                amenities = "Pool, fitness center, private dock, rooftop grills, study lounge",
+                contactPhone = "(608) 442-4200",
+                contactEmail = "staff@palisadeproperty.com"
             ),
             ApartmentEntity(
                 id = 5,
                 name = "Aberdeen Apartments",
                 address = "437 W Gorham St, Madison, WI 53703",
                 coordinates = "43.07321,-89.39356",
-                utilities = "Wifi"
+                utilities = "Wifi",
+                amenities = "Outdoor patio, fitness center, coffee bar",
+                contactPhone = "(608) 409-9962",
+                contactEmail = "staff@palisadeproperty.com"
             )
-
         )
 
         // Floorplans
@@ -64,7 +78,6 @@ object ApartmentDetails {
                 bedsBath = "5 bed, 2 bath",
                 rent = "1450 - 1680"
             ),
-
             FloorPlanEntity(
                 id = 3,
                 apartmentId = 2,
@@ -79,7 +92,6 @@ object ApartmentDetails {
                 bedsBath = "2 bed, 2 bath",
                 rent = "1700 - 1800"
             ),
-
             FloorPlanEntity(
                 id = 5,
                 apartmentId = 3,
@@ -94,7 +106,6 @@ object ApartmentDetails {
                 bedsBath = "1 bed, 1 bath",
                 rent = "1500 - 1600"
             ),
-
             FloorPlanEntity(
                 id = 7,
                 apartmentId = 4,
@@ -109,7 +120,6 @@ object ApartmentDetails {
                 bedsBath = "1 bed, 1 bath",
                 rent = "1925 - 2205"
             ),
-
             FloorPlanEntity(
                 id = 9,
                 apartmentId = 5,
