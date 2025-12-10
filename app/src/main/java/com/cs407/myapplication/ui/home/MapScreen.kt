@@ -59,7 +59,7 @@ fun MapScreen() {
     }
 
     // Camera Setup (Madison, WI)
-    val initLocation = LatLng(43.0731, -89.4012)
+    val initLocation = LatLng(43.0731, -89.3935)
     val cameraPositionState = rememberCameraPositionState {
         position = CameraPosition.fromLatLngZoom(initLocation, 14.5f)
     }

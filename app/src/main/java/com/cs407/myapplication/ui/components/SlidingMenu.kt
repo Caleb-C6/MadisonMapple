@@ -8,6 +8,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -18,7 +19,7 @@ import androidx.navigation.navArgument
 import com.cs407.myapplication.R
 import com.cs407.myapplication.ui.apartments.ApartmentDetailScreen
 import com.cs407.myapplication.ui.apartments.ApartmentsListScreen
-import com.cs407.myapplication.ui.apartments.ApartmentNameMapper  // Add this import
+import com.cs407.myapplication.ui.apartments.ApartmentNameMapper
 import com.cs407.myapplication.ui.auth.AuthManager
 import com.cs407.myapplication.ui.auth.LoginScreen
 import com.cs407.myapplication.ui.auth.SignUpScreen
@@ -71,12 +72,29 @@ fun SlidingMenu() {
         gesturesEnabled = drawerEnabled && !isMapScreen,
         drawerContent = {
             if (drawerEnabled) {
-                ModalDrawerSheet {
-                    Text("Menu", style = MaterialTheme.typography.titleMedium, modifier = Modifier.padding(16.dp))
-                    HorizontalDivider()
+                ModalDrawerSheet(
+                    drawerContainerColor = Color(0xFFD32F2F), // Red background
+                    drawerContentColor = Color.White // White text
+                ) {
+                    Text(
+                        "Menu",
+                        style = MaterialTheme.typography.titleMedium,
+                        modifier = Modifier.padding(16.dp),
+                        color = Color.White // White text for title
+                    )
+                    HorizontalDivider(color = Color.White.copy(alpha = 0.5f))
 
-                    NavigationDrawerItem(label = { Text("Home") },
+                    NavigationDrawerItem(
+                        label = { Text("Home", color = Color.White) },
                         selected = currentRoute == "home",
+                        colors = NavigationDrawerItemDefaults.colors(
+                            selectedContainerColor = Color(0xFFB71C1C), // Darker red when selected
+                            unselectedContainerColor = Color.Transparent,
+                            selectedTextColor = Color.White,
+                            unselectedTextColor = Color.White,
+                            selectedIconColor = Color.White,
+                            unselectedIconColor = Color.White
+                        ),
                         onClick = {
                             scope.launch { drawerState.close() }
                             navController.navigate("home") {
@@ -86,32 +104,68 @@ fun SlidingMenu() {
                         }
                     )
 
-                    NavigationDrawerItem(label = { Text("Apartments") },
+                    NavigationDrawerItem(
+                        label = { Text("Apartments", color = Color.White) },
                         selected = currentRoute == "apartments",
+                        colors = NavigationDrawerItemDefaults.colors(
+                            selectedContainerColor = Color(0xFFB71C1C),
+                            unselectedContainerColor = Color.Transparent,
+                            selectedTextColor = Color.White,
+                            unselectedTextColor = Color.White,
+                            selectedIconColor = Color.White,
+                            unselectedIconColor = Color.White
+                        ),
                         onClick = {
                             scope.launch { drawerState.close() }
                             navController.navigate("apartments") { launchSingleTop = true }
                         }
                     )
 
-                    NavigationDrawerItem(label = { Text("Chat") },
+                    NavigationDrawerItem(
+                        label = { Text("Chat", color = Color.White) },
                         selected = currentRoute == "chat",
+                        colors = NavigationDrawerItemDefaults.colors(
+                            selectedContainerColor = Color(0xFFB71C1C),
+                            unselectedContainerColor = Color.Transparent,
+                            selectedTextColor = Color.White,
+                            unselectedTextColor = Color.White,
+                            selectedIconColor = Color.White,
+                            unselectedIconColor = Color.White
+                        ),
                         onClick = {
                             scope.launch { drawerState.close() }
                             navController.navigate("chat") { launchSingleTop = true }
                         }
                     )
 
-                    NavigationDrawerItem(label = { Text("Roommates") },
+                    NavigationDrawerItem(
+                        label = { Text("Roommates", color = Color.White) },
                         selected = currentRoute == "roommates",
+                        colors = NavigationDrawerItemDefaults.colors(
+                            selectedContainerColor = Color(0xFFB71C1C),
+                            unselectedContainerColor = Color.Transparent,
+                            selectedTextColor = Color.White,
+                            unselectedTextColor = Color.White,
+                            selectedIconColor = Color.White,
+                            unselectedIconColor = Color.White
+                        ),
                         onClick = {
                             scope.launch { drawerState.close() }
                             navController.navigate("roommates") { launchSingleTop = true }
                         }
                     )
 
-                    NavigationDrawerItem(label = { Text("Profile") },
+                    NavigationDrawerItem(
+                        label = { Text("Profile", color = Color.White) },
                         selected = currentRoute == "profile",
+                        colors = NavigationDrawerItemDefaults.colors(
+                            selectedContainerColor = Color(0xFFB71C1C),
+                            unselectedContainerColor = Color.Transparent,
+                            selectedTextColor = Color.White,
+                            unselectedTextColor = Color.White,
+                            selectedIconColor = Color.White,
+                            unselectedIconColor = Color.White
+                        ),
                         onClick = {
                             scope.launch { drawerState.close() }
                             navController.navigate("profile") { launchSingleTop = true }
@@ -128,7 +182,7 @@ fun SlidingMenu() {
             Scaffold { innerPadding ->
                 Box(
                     Modifier
-                        .padding(top = 55.dp)  // make room for FAB
+                        .padding(top = 70.dp)  // Increased from 55.dp to make more room for FAB
                         .padding(innerPadding)
                 ) {
                     NavHost(
@@ -143,7 +197,6 @@ fun SlidingMenu() {
                         composable("chat") {
                             ChatScreen(
                                 onBackClick = {
-                                    // This will make the back arrow work
                                     navController.navigate("home") {
                                         launchSingleTop = true
                                     }
@@ -173,7 +226,7 @@ fun SlidingMenu() {
 
                             ApartmentDetailScreen(
                                 apartmentName = apartmentName,
-                                onBackClick = { navController.popBackStack()  }
+                                onBackClick = { navController.popBackStack() }
                             )
                         }
 
@@ -197,10 +250,10 @@ fun SlidingMenu() {
             if (drawerEnabled) {
                 FloatingActionButton(
                     onClick = { scope.launch { drawerState.open() } },
-                    containerColor = MaterialTheme.colorScheme.primary,
-                    contentColor = MaterialTheme.colorScheme.onPrimary,
+                    containerColor = Color(0xFFD32F2F), // Red background to match menu
+                    contentColor = Color.White, // White icon
                     modifier = Modifier
-                        .padding(start = 20.dp, top = 30.dp)
+                        .padding(start = 20.dp, top = 50.dp)  // Adjusted top padding
                         .align(Alignment.TopStart)
                         .size(35.dp)
                 ) {
