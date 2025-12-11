@@ -2,7 +2,6 @@ package com.cs407.myapplication.ui.apartments
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -75,12 +74,12 @@ fun ApartmentDetailContent(
             R.drawable.waterfront,
             R.drawable.waterfontgallary1,
             R.drawable.waterfontgallary2,
-            R.drawable.waterfontgallary3,
+            R.drawable.waterfontgallary5,
             R.drawable.waterfontgallary4
         )
         "Palisade" -> listOf(
             R.drawable.palisade,
-            R.drawable.palisadegallary1,
+            R.drawable.palisadegallary5,
             R.drawable.palisadegallary2,
             R.drawable.palisadegallary3,
             R.drawable.palisadegallary4
@@ -114,7 +113,7 @@ fun ApartmentDetailContent(
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
     ) {
-        // ---- Custom Top Bar ----
+        // Top Bar
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -141,7 +140,7 @@ fun ApartmentDetailContent(
             )
         }
 
-        // ---- Image Gallery ----
+        // Image Gallery
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -210,7 +209,7 @@ fun ApartmentDetailContent(
             }
         }
 
-        // ---- Apartment Info ----
+        // Apartment Info
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -386,7 +385,7 @@ private fun FloorPlanCardSimple(floorPlan: FloorPlanEntity) {
         Column(
             modifier = Modifier.padding(16.dp)
         ) {
-            // Header with beds/bath
+            // Header with beds and bath
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.fillMaxWidth()

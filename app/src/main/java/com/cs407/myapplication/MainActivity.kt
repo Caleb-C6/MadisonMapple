@@ -23,7 +23,7 @@ class MainActivity : ComponentActivity() {
             ApartmentDetails.preload(database.apartmentDao())
             println("DEBUG: Database initialized and preloaded")
 
-            // Optional: Test if data was loaded
+            // Test if data was loaded
             val dao = database.apartmentDao()
             val count = dao.getApartments().size
             println("DEBUG: Loaded $count apartments into database")

@@ -64,7 +64,7 @@ fun MapScreen() {
         position = CameraPosition.fromLatLngZoom(initLocation, 14.5f)
     }
 
-    // 1. Draw the Map
+    // Draw the Map
     GoogleMap(
         modifier = Modifier.fillMaxSize(),
         cameraPositionState = cameraPositionState
@@ -81,26 +81,25 @@ fun MapScreen() {
 
                     if (lat != null && lng != null) {
 
-                        // 2. Use MarkerInfoWindow instead of just Marker
+                        // Use MarkerInfoWindow instead of just Marker
                         // This allows custom content directly above the pin.
                         MarkerInfoWindow(
                             state = MarkerState(position = LatLng(lat, lng)),
                             title = apartment.name
                         ) { marker ->
-                            // --- CUSTOM INFO WINDOW CONTENT ---
 
                             // Calculate image resource dynamically
                             val firstWord = apartment.name.trim().split(" ").firstOrNull()?.lowercase() ?: ""
                             val imageResId = context.resources.getIdentifier(firstWord, "drawable", context.packageName)
 
-                            // The "Box" above the marker
+                            // The Box above the marker
                             Card(
                                 shape = RoundedCornerShape(12.dp),
                                 elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
                                 colors = CardDefaults.cardColors(containerColor = Color.White),
                                 modifier = Modifier
-                                    .width(200.dp) // Fixed width for the popup
-                                    .padding(bottom = 12.dp) // Space between box and marker
+                                    .width(200.dp)
+                                    .padding(bottom = 12.dp)
                             ) {
                                 Column(
                                     horizontalAlignment = Alignment.CenterHorizontally,
@@ -122,7 +121,7 @@ fun MapScreen() {
                                             contentDescription = "Apartment Image",
                                             modifier = Modifier
                                                 .height(120.dp)
-                                                .width(180.dp), // Fits inside the card
+                                                .width(180.dp),
                                             contentScale = ContentScale.Crop
                                         )
                                     } else {

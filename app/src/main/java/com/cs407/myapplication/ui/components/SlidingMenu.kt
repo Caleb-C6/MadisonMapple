@@ -38,7 +38,7 @@ val apartmentList = ApartmentNameMapper.getAllDisplayNames().map { displayName -
         "Aberdeen Apartments" -> R.drawable.aberdeen
         "140 Iota Courts" -> R.drawable.iota
         "The Langdon Apartment" -> R.drawable.langdon
-        else -> R.drawable.waterfront // default
+        else -> R.drawable.waterfront
     }
     Apartment(displayName, imageRes)
 }
@@ -80,7 +80,7 @@ fun SlidingMenu() {
                         "Menu",
                         style = MaterialTheme.typography.titleMedium,
                         modifier = Modifier.padding(16.dp),
-                        color = Color.White // White text for title
+                        color = Color.White // White text
                     )
                     HorizontalDivider(color = Color.White.copy(alpha = 0.5f))
 
@@ -88,7 +88,7 @@ fun SlidingMenu() {
                         label = { Text("Home", color = Color.White) },
                         selected = currentRoute == "home",
                         colors = NavigationDrawerItemDefaults.colors(
-                            selectedContainerColor = Color(0xFFB71C1C), // Darker red when selected
+                            selectedContainerColor = Color(0xFFB71C1C), // Darker red while selected
                             unselectedContainerColor = Color.Transparent,
                             selectedTextColor = Color.White,
                             unselectedTextColor = Color.White,
@@ -182,7 +182,7 @@ fun SlidingMenu() {
             Scaffold { innerPadding ->
                 Box(
                     Modifier
-                        .padding(top = 70.dp)  // Increased from 55.dp to make more room for FAB
+                        .padding(top = 70.dp)
                         .padding(innerPadding)
                 ) {
                     NavHost(
@@ -220,7 +220,7 @@ fun SlidingMenu() {
                         ) { backStackEntry ->
                             val apartmentName = backStackEntry.arguments?.getString("apartmentName") ?: ""
 
-                            // Find the apartment from our list (optional, for image)
+                            // Find the apartment from our list
                             val apartment = apartmentList.find { it.name == apartmentName }
                                 ?: Apartment("Unknown", R.drawable.waterfront)
 
@@ -250,10 +250,10 @@ fun SlidingMenu() {
             if (drawerEnabled) {
                 FloatingActionButton(
                     onClick = { scope.launch { drawerState.open() } },
-                    containerColor = Color(0xFFD32F2F), // Red background to match menu
+                    containerColor = Color(0xFFD32F2F), // Red background
                     contentColor = Color.White, // White icon
                     modifier = Modifier
-                        .padding(start = 20.dp, top = 50.dp)  // Adjusted top padding
+                        .padding(start = 20.dp, top = 50.dp)
                         .align(Alignment.TopStart)
                         .size(35.dp)
                 ) {

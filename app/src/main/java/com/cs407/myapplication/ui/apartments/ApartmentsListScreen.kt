@@ -29,7 +29,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.cs407.myapplication.data.apartments.local.db.ApartmentDatabase
 import com.cs407.myapplication.data.apartments.repository.ApartmentRepository
 
-// Update the SortOrder enum
+// SortOrder enum
 enum class SortOrder {
     A_TO_Z,
     Z_TO_A,
@@ -229,7 +229,7 @@ private fun SimpleSortDropdownMenu(
             }
         )
 
-        // Simple Dropdown Menu - Only text, no icons
+        // Simple Dropdown Menu
         DropdownMenu(
             expanded = expanded,
             onDismissRequest = { expanded = false }
@@ -351,7 +351,6 @@ fun SimpleApartmentCard(
                 modifier = Modifier.weight(1f),
                 verticalArrangement = Arrangement.Center
             ) {
-                // Only show the apartment name - no extra details
                 Text(
                     text = displayName,
                     style = MaterialTheme.typography.titleMedium,
@@ -418,17 +417,3 @@ fun SearchBar(
     )
 }
 
-// Keep the old ApartmentCard for compatibility
-@Composable
-fun ApartmentCard(
-    apartment: Apartment,
-    onClick: () -> Unit
-) {
-    SimpleApartmentCard(
-        apartmentListItem = ApartmentListViewModel.ApartmentListItem(
-            id = 0,
-            name = apartment.name
-        ),
-        onClick = onClick
-    )
-}

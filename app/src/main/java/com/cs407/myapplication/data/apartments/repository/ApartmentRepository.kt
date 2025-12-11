@@ -12,7 +12,7 @@ class ApartmentRepository(private val dao: ApartmentDao) {
     suspend fun getFloorPlans(apartmentId: Int): List<FloorPlanEntity> =
         dao.getFloorPlans(apartmentId)
 
-    // NEW METHODS FOR SORTING
+    // METHODS FOR SORTING
 
     suspend fun getAllApartments(): List<ApartmentEntity> =
         dao.getApartments()

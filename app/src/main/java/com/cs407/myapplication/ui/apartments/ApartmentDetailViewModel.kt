@@ -17,25 +17,16 @@ class ApartmentDetailViewModel(private val repository: ApartmentRepository) : Vi
     private val _floorPlans = MutableStateFlow<List<FloorPlanEntity>>(emptyList())
     val floorPlans: StateFlow<List<FloorPlanEntity>> = _floorPlans
 
-    fun loadApartment(displayName: String) {  // Changed parameter name for clarity
+    fun loadApartment(displayName: String) {
         viewModelScope.launch {
-            // Convert display name to database name using the mapper
             val databaseName = ApartmentNameMapper.getDatabaseName(displayName)
-
-            // Add logging for debugging
-            println("DEBUG: Converting display name '$displayName' to database name '$databaseName'")
-
             val apt = repository.getApartmentByName(databaseName)
 
-            // More logging
-            println("DEBUG: Found apartment: ${apt?.name ?: "NOT FOUND"}")
-
             _apartment.value = apt
-            if (apt != null) {
-                _floorPlans.value = repository.getFloorPlans(apt.id)
-                println("DEBUG: Loaded ${_floorPlans.value.size} floor plans")
+            _floorPlans.value = if (apt != null) {
+                repository.getFloorPlans(apt.id)
             } else {
-                _floorPlans.value = emptyList()
+                emptyList()
             }
         }
     }
