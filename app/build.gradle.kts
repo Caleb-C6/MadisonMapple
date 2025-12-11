@@ -5,6 +5,8 @@ plugins {
     id("com.google.devtools.ksp")
     id("com.google.android.libraries.mapsplatform.secrets-gradle-plugin")
     id("com.google.gms.google-services")
+
+
 }
 
 android {
@@ -29,6 +31,10 @@ android {
                 "proguard-rules.pro"
             )
         }
+    }
+    buildFeatures {
+        compose = true
+        buildConfig = true
     }
     secrets {
         defaultPropertiesFileName = "secrets.properties"

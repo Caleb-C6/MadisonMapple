@@ -3,6 +3,7 @@ package com.cs407.myapplication.ui.chat
 import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.cs407.myapplication.BuildConfig
 import com.google.ai.client.generativeai.GenerativeModel
 import com.google.ai.client.generativeai.type.content
 import kotlinx.coroutines.launch
@@ -11,7 +12,7 @@ class ChatViewModel : ViewModel() {
 
     private val generativeModel = GenerativeModel(
         modelName = "gemini-2.5-flash",
-        apiKey = "AIzaSyAWfQL8_iaQhLBQ5LfeD6BxpcMV1Pub9Ag"
+        apiKey = BuildConfig.GEMINI_API_KEY
     )
 
     private val chat = generativeModel.startChat(
