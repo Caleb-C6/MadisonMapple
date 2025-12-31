@@ -9,6 +9,7 @@ import kotlinx.coroutines.tasks.await
 object ProfileRepository {
 
     private const val USERS_COLLECTION = "users"
+
     @SuppressLint("StaticFieldLeak")
     private val firestore = Firebase.firestore
 

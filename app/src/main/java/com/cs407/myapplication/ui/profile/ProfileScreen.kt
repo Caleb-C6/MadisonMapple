@@ -68,10 +68,22 @@ fun ProfileScreen(
     val currentUser = AuthManager.auth.currentUser
     val scrollState = rememberScrollState()
 
-    var showDeleteDialog by remember { mutableStateOf(false) }
-
     var showDeleteWarningDialog by remember { mutableStateOf(false) }
     var showPasswordDialog by remember { mutableStateOf(false) }
+
+    // Track previous saving state so we only toast when a save finishes successfully
+    var lastIsSaving by remember { mutableStateOf(false) }
+
+    /* ---------------------------------------------------------
+       Toast on successful save (no validation errors / failures)
+    --------------------------------------------------------- */
+    LaunchedEffect(state.isSaving, state.errorMsg) {
+        // If we WERE saving and now we're NOT, and there's no error -> success
+        if (lastIsSaving && !state.isSaving && state.errorMsg == null) {
+            Toast.makeText(context, "Profile saved!", Toast.LENGTH_SHORT).show()
+        }
+        lastIsSaving = state.isSaving
+    }
 
     /* ---------------------------------------------------------
        React to completed deletion
@@ -266,10 +278,8 @@ fun ProfileScreen(
 
         Button(
             onClick = {
+                // Only trigger save; toast is handled by LaunchedEffect
                 viewModel.saveProfile()
-                if (state.errorMsg == null) {
-                    Toast.makeText(context, "Profile saved!", Toast.LENGTH_SHORT).show()
-                }
             },
             modifier = Modifier.fillMaxWidth(),
             enabled = !state.isSaving && !state.isDeleting
